@@ -1,7 +1,6 @@
 package ru.vik.trials.coffee
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,22 +8,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,16 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.vik.trials.coffee.ui.auth.AuthScreen
 import ru.vik.trials.coffee.ui.common.register
 import ru.vik.trials.coffee.ui.register.RegisterScreen
@@ -70,14 +60,13 @@ class MainActivity : ComponentActivity() {
                 val showBackArrow = remember { mutableStateOf(false) }
                 val topBarTitle = remember { mutableStateOf(getString(R.string.screen_title)) }
 
-                // Будем контролировать работу навигации и менять флаг отображения кнопки "Назад"
                 navController.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
+                    // Отследим навигацию приложения
                     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
-                        Log.d(TAG, "onDestinationChanged")
-                        Log.d(TAG, "navController.currentDestination: ${navController.currentDestination}")
-                        Log.d(TAG, "   route: ${navController.currentDestination?.route}")
-                        Log.d(TAG, "   label: ${navController.currentDestination?.label}")
-                        Log.d(TAG, "   arguments: ${navController.currentDestination?.arguments}")
+                        // Изменим название экрана
+                        val label = destination.label?.toString()
+                        topBarTitle.value = if (label.isNullOrBlank()) getString(R.string.screen_title) else label
+                        // Изменим флаг отображения кнопки "Назад"
                         showBackArrow.value = (controller.previousBackStackEntry != null)
                     }
                 })
@@ -87,7 +76,6 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         CenterAlignedTopAppBar(
                             title = {
-                                // TODO: Менять название при смене экрана.
                                 Text(topBarTitle.value)
                             },
                             navigationIcon = {
