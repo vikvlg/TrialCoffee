@@ -1,17 +1,24 @@
 <resources>
     <string name="app_name">TrialCoffee</string>
     <string name="screen_title">Navigation Demo</string>
+    <string name="screen_auth_title">Вход</string>
+    <string name="screen_reg_title">Регистрация</string>
     <string name="navigation_back">Назад</string>
     <string name="navigation_menu_item">Меню</string>
 
     <string name="input_mail">e-mail</string>
     <string name="input_mail_hint">example@example.ru</string>
     <string name="input_password">Пароль</string>
-    <string name="input_password_hint">password</string>
+    <string name="input_password_hint">пароль</string>
     <string name="input_rep_password">Повторите пароль</string>
-    <string name="input_rep_password_hint">password</string>
+    <string name="input_rep_password_hint">тот же пароль</string>
     <string name="reg_register">Регистрация</string>
 
     <string name="auth_login">Войти</string>
+    <string name="auth_to_reg">Регистрация</string>
+    <string name="auth_email_empty">Необходимо ввести e-mail</string>
+    <string name="auth_email_wrong">Некорректный e-mail</string>
+    <string name="auth_password_empty">Необходимо ввести пароль</string>
+    <string name="auth_password_different">Пароли не совпадают</string>
 
 </resources>

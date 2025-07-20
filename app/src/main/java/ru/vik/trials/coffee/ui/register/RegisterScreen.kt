@@ -1,32 +1,27 @@
 package ru.vik.trials.coffee.ui.register
 
 import android.util.Log
-import androidx.compose.foundation.background
+import android.view.Gravity
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.ui.auth.AuthScreen
 import ru.vik.trials.coffee.ui.common.InputText
 import ru.vik.trials.coffee.ui.common.Screen
+import ru.vik.trials.coffee.ui.common.composable
 import javax.inject.Inject
 
 class RegisterScreen @Inject constructor(): Screen(ROUTE) {
@@ -52,6 +47,7 @@ class RegisterScreen @Inject constructor(): Screen(ROUTE) {
         navController: NavHostController,
         modifier: Modifier
     ) {
+        this.navController = navController
 //        val arguments = listOf(
 //            navArgument("id") {
 //                type = NavType.LongType
@@ -61,9 +57,10 @@ class RegisterScreen @Inject constructor(): Screen(ROUTE) {
 //                nullable = true
 //            }
 //        )
-        navGraphBuilder.composable(route) {
+        navGraphBuilder.composable(route, navController.context.getString(R.string.screen_reg_title)) {
             RegisterBlock(
-                modifier = modifier
+                modifier = modifier,
+                screen = this
             )
         }
     }
@@ -74,12 +71,10 @@ class RegisterScreen @Inject constructor(): Screen(ROUTE) {
     }
 }
 
-// TODO: Переделать.
-val view: RegisterScreen = RegisterScreen.getInstance()
-
 @Composable
-fun RegisterBlock(modifier: Modifier) {
+fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
     val viewModel: RegisterViewModel = hiltViewModel()
+    val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -90,8 +85,15 @@ fun RegisterBlock(modifier: Modifier) {
         InputText(R.string.input_password, R.string.input_password_hint, viewModel.password, true)
         InputText(R.string.input_rep_password, R.string.input_rep_password_hint, viewModel.repPassword, true)
         Button(
-            //onClick = view::onRegisterClick,
-            onClick = viewModel::onRegisterClick,
+            onClick = {
+                val error = viewModel.onRegisterClick()
+                if (error != 0) {
+                    Toast.makeText(context, context.getString(error), Toast.LENGTH_SHORT).apply {
+                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
+                        show()
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth(fraction = 0.9f),
             content = {
