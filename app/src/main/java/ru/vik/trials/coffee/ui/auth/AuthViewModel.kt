@@ -1,48 +1,81 @@
 package ru.vik.trials.coffee.ui.auth
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.asStateFlow
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.data.SignInUseCase
+import ru.vik.trials.coffee.domain.entities.UserAuthData
+import ru.vik.trials.coffee.presentation.BaseViewModel
+import ru.vik.trials.coffee.presentation.MutableUIStateFlow
+import ru.vik.trials.coffee.presentation.UIState
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor()
-    : ViewModel() {
+class AuthViewModel @Inject constructor(
+    private val signInUseCase: SignInUseCase
+)
+    : BaseViewModel() {
 
     companion object {
         private const val TAG = "AuthViewModel"
+        private const val ERROR_BLANK_DATA = 400
+        private const val ERROR_WRONG_DATA = 404
 
-        private var instance: AuthViewModel? = null
-        fun getInstance(): AuthViewModel {
-            var inst = instance
-            if (inst == null) {
-                inst = AuthViewModel()
-                instance = inst
-            }
-            return inst
-        }
+//        private var instance: AuthViewModel? = null
+//        fun getInstance(): AuthViewModel {
+//            var inst = instance
+//            if (inst == null) {
+//                inst = AuthViewModel()
+//                instance = inst
+//            }
+//            return inst
+//        }
     }
+
+    private val _uiState = MutableUIStateFlow<Unit>()
+    val uiState = _uiState.asStateFlow()
 
     val email: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
     val password: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
 
-    fun onAuthClick(): Int {
+    fun onAuthClick() {
+        if (_uiState.value !is UIState.Idle)
+            return
+
+        var errorMsg = 0
         if (email.value.text.isBlank())
-            return R.string.auth_email_empty
+            errorMsg = R.string.auth_email_empty
+//        // Простенькая проверка на корректность почты
+//        else if (!Regex("^([.a-zA-z0-9_]+)@([.a-zA-z0-9_]+)\\.(\\w+)\$").matches(email.value.text))
+//            errorMsg = R.string.auth_email_wrong
+        else if (password.value.text.isBlank())
+            errorMsg = R.string.auth_password_empty
 
-        // Простенькая проверка на корректность почты
-        val regexEmail = Regex("^([.a-zA-z0-9_]+)@([.a-zA-z0-9_]+)\\.(\\w+)\$")
-        if (!regexEmail.matches(email.value.text))
-            return R.string.auth_email_wrong
+        if (errorMsg != 0) {
+            _uiState.value = UIState.Error(errorMsg)
+            return
+        }
 
-        if (password.value.text.isEmpty())
-            return R.string.auth_password_empty
+        // Запрос на авторизацию
+        //_uiState.value = UIState.Loading()
+        signInUseCase(UserAuthData(email.value.text, password.value.text)).collectNetworkRequest(_uiState, ::mapErrorCodes) {
+            Log.d("TAG", "signInUseCase: $it")
+        }
+    }
 
-        // TODO: Запрос на авторизацию
+    fun resetState() {
+        _uiState.value = UIState.Idle()
+    }
 
-        return 0
+    private fun mapErrorCodes(code: Int): Int {
+        return when (code) {
+            ERROR_BLANK_DATA -> R.string.auth_error_wrong
+            ERROR_WRONG_DATA -> R.string.auth_error_deny
+            else -> R.string.auth_error_unk
+        }
     }
 }

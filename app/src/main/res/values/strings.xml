@@ -3,6 +3,7 @@
     <string name="screen_title">Navigation Demo</string>
     <string name="screen_auth_title">Вход</string>
     <string name="screen_reg_title">Регистрация</string>
+    <string name="screen_map_title">Карта</string>
     <string name="navigation_back">Назад</string>
     <string name="navigation_menu_item">Меню</string>
 
@@ -20,5 +21,8 @@
     <string name="auth_email_wrong">Некорректный e-mail</string>
     <string name="auth_password_empty">Необходимо ввести пароль</string>
     <string name="auth_password_different">Пароли не совпадают</string>
+    <string name="auth_error_wrong">Пустой логин/пароль</string>
+    <string name="auth_error_deny">Неверный логин/пароль</string>
+    <string name="auth_error_unk">Неизвестная ошибка</string>
 
 </resources>

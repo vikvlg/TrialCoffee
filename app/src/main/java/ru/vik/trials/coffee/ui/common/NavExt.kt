@@ -35,8 +35,6 @@ fun NavGraphBuilder.composable(
         ComposeNavigator.Destination(provider[ComposeNavigator::class], content).apply {
             this.route = route
             this.label = label
-            Log.d("", "composable2. id: $id, route: $route")
-            Log.d("", "   string: ${R.string.screen_auth_title}")
             arguments.forEach { (argumentName, argument) ->
                 addArgument(argumentName, argument)
             }

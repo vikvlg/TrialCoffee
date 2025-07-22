@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,13 +27,20 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import dagger.hilt.EntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.presentation.UIState
 import ru.vik.trials.coffee.ui.common.InputText
 import ru.vik.trials.coffee.ui.common.Screen
 import ru.vik.trials.coffee.ui.common.composable
+import ru.vik.trials.coffee.ui.map.MapScreen
 import ru.vik.trials.coffee.ui.register.RegisterScreen
+import javax.inject.Inject
 
 class AuthScreen: Screen(ROUTE) {
     companion object {
@@ -47,9 +58,22 @@ class AuthScreen: Screen(ROUTE) {
         }
     }
 
+    //@Inject lateinit var viewModel: AuthViewModel
+    //val viewModel: AuthViewModel by viewModel()
+
     fun onRegisterCLick() {
         Log.d(TAG, "onRegisterCLick")
         navController.navigate(RegisterScreen.ROUTE)
+    }
+
+    fun onAuthSuccess() {
+        Log.d(TAG, "onAuthSuccess")
+        navController.navigate(MapScreen.ROUTE)
+    }
+
+    fun onAuthCLick() {
+        Log.d(TAG, "onAuthCLick")
+//        Log.d(TAG, "   viewModel: $viewModel")
     }
 
     override fun registerGraph(
@@ -73,6 +97,32 @@ private const val CLICK_REG_TAG = "AUTH_TO_REG"
 fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
     val viewModel: AuthViewModel = hiltViewModel()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        // Обработчик событий из viewModel
+        viewModel.uiState.collect { newValue ->
+            if (newValue is UIState.Idle || newValue is UIState.Loading)
+                return@collect
+
+            when (newValue) {
+                is UIState.Error -> {
+                    val text = context.getString(newValue.error)
+                    Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
+                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
+                        show()
+                    }
+                }
+
+                is UIState.Success -> {
+                    screen.onAuthSuccess()
+                }
+
+                else -> Log.d("TAG", "LaunchedEffect uiState: $newValue")
+            }
+            viewModel.resetState()
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -82,15 +132,7 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
         InputText(R.string.input_mail, R.string.input_mail_hint, viewModel.email)
         InputText(R.string.input_password, R.string.input_password_hint, viewModel.password, true)
         Button(
-            onClick = {
-                val error = viewModel.onAuthClick()
-                if (error != 0) {
-                    Toast.makeText(context, context.getString(error), Toast.LENGTH_SHORT).apply {
-                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-                        show()
-                    }
-                }
-            },
+            onClick = viewModel::onAuthClick,
             modifier = Modifier
                 .fillMaxWidth(fraction = 0.9f),
             content = {
