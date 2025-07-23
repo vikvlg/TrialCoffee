@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,16 +19,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import ru.vik.trials.coffee.R
-import ru.vik.trials.coffee.ui.auth.AuthScreen
+import ru.vik.trials.coffee.presentation.Route
+import ru.vik.trials.coffee.presentation.UIState
 import ru.vik.trials.coffee.ui.common.InputText
 import ru.vik.trials.coffee.ui.common.Screen
 import ru.vik.trials.coffee.ui.common.composable
 import javax.inject.Inject
 
-class RegisterScreen @Inject constructor(): Screen(ROUTE) {
+class RegisterScreen @Inject constructor(): Screen(Route.SignUp()) {
     companion object {
         private const val TAG = "Register"
-        const val ROUTE = "register"
 
         private var instance: RegisterScreen? = null
         fun getInstance(): RegisterScreen {
@@ -65,9 +66,8 @@ class RegisterScreen @Inject constructor(): Screen(ROUTE) {
         }
     }
 
-    fun onRegisterClick() {
-        Log.d(TAG, "onRegisterClick")
-        navController.navigate(AuthScreen.ROUTE)
+    fun onRegisterSuccess() {
+        navController.navigate(Route.Shops())
     }
 }
 
@@ -75,6 +75,32 @@ class RegisterScreen @Inject constructor(): Screen(ROUTE) {
 fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
     val viewModel: RegisterViewModel = hiltViewModel()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        // Обработчик событий из viewModel
+        viewModel.uiState.collect { newValue ->
+            if (newValue is UIState.Idle || newValue is UIState.Loading)
+                return@collect
+
+            when (newValue) {
+                is UIState.Error -> {
+                    val text = context.getString(newValue.error)
+                    Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
+                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
+                        show()
+                    }
+                }
+
+                is UIState.Success -> {
+                    screen.onRegisterSuccess()
+                }
+
+                else -> Log.d("TAG", "LaunchedEffect uiState: $newValue")
+            }
+            viewModel.resetState()
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -86,13 +112,7 @@ fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
         InputText(R.string.input_rep_password, R.string.input_rep_password_hint, viewModel.repPassword, true)
         Button(
             onClick = {
-                val error = viewModel.onRegisterClick()
-                if (error != 0) {
-                    Toast.makeText(context, context.getString(error), Toast.LENGTH_SHORT).apply {
-                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-                        show()
-                    }
-                }
+                viewModel.onRegisterClick()
             },
             modifier = Modifier
                 .fillMaxWidth(fraction = 0.9f),

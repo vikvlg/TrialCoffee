@@ -12,9 +12,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,25 +24,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import dagger.hilt.EntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.UIState
 import ru.vik.trials.coffee.ui.common.InputText
 import ru.vik.trials.coffee.ui.common.Screen
 import ru.vik.trials.coffee.ui.common.composable
-import ru.vik.trials.coffee.ui.map.MapScreen
-import ru.vik.trials.coffee.ui.register.RegisterScreen
-import javax.inject.Inject
 
-class AuthScreen: Screen(ROUTE) {
+class AuthScreen: Screen(Route.SignIn()) {
     companion object {
         private const val TAG = "AuthScreen"
-        const val ROUTE = "auth"
 
         private var instance: AuthScreen? = null
         fun getInstance(): AuthScreen {
@@ -58,22 +48,14 @@ class AuthScreen: Screen(ROUTE) {
         }
     }
 
-    //@Inject lateinit var viewModel: AuthViewModel
-    //val viewModel: AuthViewModel by viewModel()
-
-    fun onRegisterCLick() {
+    fun onRegisterClick() {
         Log.d(TAG, "onRegisterCLick")
-        navController.navigate(RegisterScreen.ROUTE)
+        navController.navigate(Route.SignUp())
     }
 
     fun onAuthSuccess() {
         Log.d(TAG, "onAuthSuccess")
-        navController.navigate(MapScreen.ROUTE)
-    }
-
-    fun onAuthCLick() {
-        Log.d(TAG, "onAuthCLick")
-//        Log.d(TAG, "   viewModel: $viewModel")
+        navController.navigate(Route.Shops())
     }
 
     override fun registerGraph(
@@ -145,9 +127,7 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
             withLink(
                 link = LinkAnnotation.Clickable(
                     tag = CLICK_REG_TAG,
-                    linkInteractionListener = {
-                        screen.onRegisterCLick()
-                    },
+                    linkInteractionListener = { screen.onRegisterClick() } ,
                 ),
             ) {
                 append(stringResource(R.string.auth_to_reg))
