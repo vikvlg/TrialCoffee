@@ -1,6 +1,5 @@
 package ru.vik.trials.coffee.data
 
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.model.AuthReq
@@ -16,18 +15,13 @@ class SignInRepositoryImpl @Inject constructor(
 ) : SignInRepository {
 
     override fun signIn(authData: UserAuthData): Flow<Resp<Nothing>> = flow {
-        Log.d("AuthRepositoryImpl", "[${Thread.currentThread().name}] signIn...")
-        val res = service.signIn2(AuthReq(authData.login, authData.password))
-        Log.d("AuthRepositoryImpl", "[${Thread.currentThread().name}] signIn.OK, isSuccessful: ${res.isSuccessful}")
+        val res = service.signIn(AuthReq(authData.login, authData.password))
 
         if (res.isSuccessful) {
             val token = res.body()?.token ?: ""
             userDataPreferences.token = token
-            //emit(Either.Left(AuthToken(token)))
             emit(Resp(null))
         } else {
-            Log.d("AuthRepositoryImpl", "error: ${res.code()}")
-            //emit(Either.Right(res.code()))
             emit(Resp(res.code()))
         }
     }
