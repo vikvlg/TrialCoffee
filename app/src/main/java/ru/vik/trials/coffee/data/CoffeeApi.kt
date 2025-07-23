@@ -3,42 +3,40 @@ package ru.vik.trials.coffee.data
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import ru.vik.trials.coffee.data.model.AuthReq
 import ru.vik.trials.coffee.data.model.AuthResp
 import ru.vik.trials.coffee.data.model.LocationResp
+import ru.vik.trials.coffee.data.model.MenuResp
 import ru.vik.trials.coffee.data.model.Token
 
 interface CoffeeApi {
     @POST("/auth/login")
-    fun signIn(
+    suspend fun signIn(
         @Body
         req: AuthReq
-    ): Call<AuthResp>
+    ): Response<AuthResp>
 
     @POST("/auth/register")
-    fun signUp(
+    suspend fun signUp(
         @Body
         req: AuthReq
-    ): Call<AuthResp>
+    ): Response<AuthResp>
 
     @GET("/locations")
-    fun getLocations(
-        @Header("Authorization")
-        token: Token
-    ): Call<List<LocationResp>>
-
-    @GET("/locations")
-    suspend fun getLocations2(
+    suspend fun getLocations(
         @Header("Authorization")
         token: Token
     ): Response<List<LocationResp>>
 
-    @POST("/auth/login")
-    suspend fun signIn2(
-        @Body
-        req: AuthReq
-    ): Response<AuthResp>
+    @GET("/location/{id}/menu")
+    suspend fun getMenu(
+        @Header("Authorization")
+        token: Token,
+        @Field("id")
+        shopId: Int
+    ): Response<List<MenuResp>>
 }

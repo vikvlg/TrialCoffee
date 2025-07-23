@@ -16,7 +16,7 @@ class GetLocationsRepositoryImpl @Inject constructor(
 ) : GetLocationsRepository {
 
     override fun getLocations(): Flow<Resp<Location>> = flow {
-        val res = service.getLocations2(Token(pref.token))
+        val res = service.getLocations(Token(pref.token))
         if (res.isSuccessful) {
             res.body()?.let {
                 for (loc in it) {
