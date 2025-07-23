@@ -7,12 +7,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -22,18 +18,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -46,21 +33,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.vik.trials.coffee.presentation.Consts
 import ru.vik.trials.coffee.data.GetLocationsUseCase
 import ru.vik.trials.coffee.data.SignInUseCase
-import ru.vik.trials.coffee.domain.entities.Resp
-import ru.vik.trials.coffee.domain.entities.UserAuthData
+import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.ui.auth.AuthScreen
 import ru.vik.trials.coffee.ui.common.checkPermissions
 import ru.vik.trials.coffee.ui.common.register
-import ru.vik.trials.coffee.ui.map.MapScreen
+import ru.vik.trials.coffee.ui.shops.MapScreen
+import ru.vik.trials.coffee.ui.menu.MenuScreen
 import ru.vik.trials.coffee.ui.register.RegisterScreen
+import ru.vik.trials.coffee.ui.shops.ShopsScreen
 import ru.vik.trials.coffee.ui.theme.TrialCoffeeTheme
 import javax.inject.Inject
 
@@ -218,14 +202,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         CenterAlignedTopAppBar(
+                            // Заголовок экрана.
                             title = {
                                 Text(topBarTitle.value)
                             },
+                            // Кнопка "Назад"
                             navigationIcon = {
                                 if (showBackArrow.value)
                                     IconButton(
                                         onClick = {
-                                            // BUG: Без проверки глючит (в самом начале backQueue содержит 2 элемента).
+                                            // BUG: Без этой проверки глючит (в самом начале backQueue содержит 2 элемента).
                                             if (navController.previousBackStackEntry != null)
                                                 navController.popBackStack()
                                         }
@@ -236,6 +222,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                             },
+                            // Меню экрана.
                             actions = {
                                 IconButton(onClick = { /* doSomething() */ }) {
                                     Icon(
@@ -250,10 +237,9 @@ class MainActivity : ComponentActivity() {
                         val modifier = Modifier.padding(padding)
                         NavHost(
                             navController = navController,
-                            startDestination = AuthScreen.ROUTE
+                            startDestination = Route.SignIn()
                         ) {
-                            //val authScreen: AuthScreen
-                            // TODO: Для экранов нужно использовать DI.
+                            // TODO: Для экранов нужно использовать DI?
                             register(
                                 AuthScreen.getInstance(),
                                 navController,
@@ -264,6 +250,14 @@ class MainActivity : ComponentActivity() {
                                 modifier)
                             register(
                                 MapScreen.getInstance(),
+                                navController,
+                                modifier)
+                            register(
+                                ShopsScreen.getInstance(),
+                                navController,
+                                modifier)
+                            register(
+                                MenuScreen.getInstance(),
                                 navController,
                                 modifier)
                         }
@@ -316,67 +310,5 @@ class MainActivity : ComponentActivity() {
         for (r in grantResults) {
             Log.d(TAG, "   $r")
         }
-    }
-}
-
-//@Composable
-//fun MapTest(modifier: Modifier) {
-//    val context = LocalContext.current
-//    val mapView = remember { mutableStateOf<MapView?>(null) }
-//
-//    Scaffold(modifier) { _ ->
-//        AndroidView(
-//            factory = {MapView(it)},
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            mapView.value = it
-//        }
-//    }
-//
-//    LaunchedEffect(key1 = "loadMapView") {
-//        snapshotFlow { mapView.value }.collect {
-//            it?.let {
-//                MapKitFactory.initialize(context)
-//                MapKitFactory.getInstance().onStart()
-//                it.onStart()
-//            }
-//        }
-//    }
-//}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val viewModel: MainViewModel = hiltViewModel()
-    var textState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
-    val textValue = remember { mutableStateOf(TextFieldValue()) }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Text(
-            text = "Hello $name! Again!",
-            modifier = modifier
-                .background(Color.Red)
-        )
-        BasicTextField(
-            value = viewModel.textValue.value,
-            onValueChange = { viewModel.textValue.value = it  },
-            modifier = modifier
-                .background(Color.Blue)
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TrialCoffeeTheme {
-        Greeting("Android")
     }
 }

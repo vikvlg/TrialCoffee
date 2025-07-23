@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 
 abstract class Screen(val route: String) {
     protected lateinit var navController: NavHostController
+
     abstract fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
         navController: NavHostController,

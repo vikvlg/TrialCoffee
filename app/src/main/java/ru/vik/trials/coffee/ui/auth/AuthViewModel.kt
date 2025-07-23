@@ -24,20 +24,15 @@ class AuthViewModel @Inject constructor(
         private const val TAG = "AuthViewModel"
         private const val ERROR_BLANK_DATA = 400
         private const val ERROR_WRONG_DATA = 404
-
-//        private var instance: AuthViewModel? = null
-//        fun getInstance(): AuthViewModel {
-//            var inst = instance
-//            if (inst == null) {
-//                inst = AuthViewModel()
-//                instance = inst
-//            }
-//            return inst
-//        }
     }
 
     private val _uiState = MutableUIStateFlow<Unit>()
     val uiState = _uiState.asStateFlow()
+
+    // TODO: Проверить работу MutableSharedFlow.
+    // TODO: Попробовать отследить изменение email или password.
+//    private val _uiState2 = MutableSharedFlow<Unit>()
+//    val uiState2 = _uiState2.asSharedFlow()
 
     val email: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
     val password: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
@@ -61,7 +56,6 @@ class AuthViewModel @Inject constructor(
         }
 
         // Запрос на авторизацию
-        //_uiState.value = UIState.Loading()
         signInUseCase(UserAuthData(email.value.text, password.value.text)).collectNetworkRequest(_uiState, ::mapErrorCodes) {
             Log.d("TAG", "signInUseCase: $it")
         }

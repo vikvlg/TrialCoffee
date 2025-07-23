@@ -1,6 +1,5 @@
 package ru.vik.trials.coffee.ui.common
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NamedNavArgument
@@ -10,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.get
-import ru.vik.trials.coffee.R
 
 fun NavGraphBuilder.register(
     screenApi: Screen,
