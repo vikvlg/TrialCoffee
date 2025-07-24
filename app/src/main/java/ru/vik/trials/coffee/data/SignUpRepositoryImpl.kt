@@ -1,6 +1,5 @@
 package ru.vik.trials.coffee.data
 
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.model.AuthReq
@@ -10,6 +9,7 @@ import ru.vik.trials.coffee.domain.entities.Resp
 import ru.vik.trials.coffee.domain.entities.UserAuthData
 import javax.inject.Inject
 
+/** Реализация репозитория регистрации на сервере. */
 class SignUpRepositoryImpl @Inject constructor(
     private val service: CoffeeApi,
     private val userDataPreferences: UserDataPreferences
