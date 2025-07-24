@@ -1,4 +1,4 @@
-package ru.vik.trials.coffee.ui.common
+package ru.vik.trials.coffee.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

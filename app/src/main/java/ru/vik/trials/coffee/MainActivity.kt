@@ -38,9 +38,9 @@ import ru.vik.trials.coffee.domain.GetLocationsUseCase
 import ru.vik.trials.coffee.domain.SignInUseCase
 import ru.vik.trials.coffee.presentation.Consts
 import ru.vik.trials.coffee.presentation.Route
+import ru.vik.trials.coffee.presentation.register
 import ru.vik.trials.coffee.ui.auth.AuthScreen
 import ru.vik.trials.coffee.ui.common.checkPermissions
-import ru.vik.trials.coffee.ui.common.register
 import ru.vik.trials.coffee.ui.menu.MenuScreen
 import ru.vik.trials.coffee.ui.register.RegisterScreen
 import ru.vik.trials.coffee.ui.shops.MapScreen

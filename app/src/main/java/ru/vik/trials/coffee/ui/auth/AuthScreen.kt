@@ -30,8 +30,8 @@ import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.UIState
+import ru.vik.trials.coffee.presentation.composable
 import ru.vik.trials.coffee.ui.InputText
-import ru.vik.trials.coffee.ui.common.composable
 
 class AuthScreen: Screen(Route.SignIn()) {
     companion object {
