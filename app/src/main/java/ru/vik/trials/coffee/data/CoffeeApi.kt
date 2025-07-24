@@ -1,12 +1,13 @@
 package ru.vik.trials.coffee.data
 
-import retrofit2.Call
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
+import retrofit2.http.Url
 import ru.vik.trials.coffee.data.model.AuthReq
 import ru.vik.trials.coffee.data.model.AuthResp
 import ru.vik.trials.coffee.data.model.LocationResp
@@ -36,7 +37,17 @@ interface CoffeeApi {
     suspend fun getMenu(
         @Header("Authorization")
         token: Token,
-        @Field("id")
+        @Query("id")
         shopId: Int
     ): Response<List<MenuResp>>
+
+    /**
+     * Загружает картинку.
+     *
+     * @param url Ссылка на картинку.
+     */
+    @GET
+    suspend fun downloadImage(
+        @Url url: String
+    ): Response<ResponseBody>
 }
