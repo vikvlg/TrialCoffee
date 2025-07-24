@@ -1,6 +1,5 @@
-package ru.vik.trials.coffee.data
+package ru.vik.trials.coffee.domain
 
-import ru.vik.trials.coffee.domain.SignInRepository
 import ru.vik.trials.coffee.domain.entities.UserAuthData
 import javax.inject.Inject
 

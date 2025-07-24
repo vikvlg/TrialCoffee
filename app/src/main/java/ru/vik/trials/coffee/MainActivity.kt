@@ -34,30 +34,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import ru.vik.trials.coffee.domain.GetLocationsUseCase
+import ru.vik.trials.coffee.domain.SignInUseCase
 import ru.vik.trials.coffee.presentation.Consts
-import ru.vik.trials.coffee.data.GetLocationsUseCase
-import ru.vik.trials.coffee.data.SignInUseCase
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.ui.auth.AuthScreen
 import ru.vik.trials.coffee.ui.common.checkPermissions
 import ru.vik.trials.coffee.ui.common.register
-import ru.vik.trials.coffee.ui.shops.MapScreen
 import ru.vik.trials.coffee.ui.menu.MenuScreen
 import ru.vik.trials.coffee.ui.register.RegisterScreen
+import ru.vik.trials.coffee.ui.shops.MapScreen
 import ru.vik.trials.coffee.ui.shops.ShopsScreen
 import ru.vik.trials.coffee.ui.theme.TrialCoffeeTheme
 import javax.inject.Inject
-
-class TestClass<T> {
-    val errorCode: Int
-
-    val value: T?
-
-    constructor(error: Int) {
-        errorCode = error
-        value = null
-    }
-}
 
 @ExperimentalMaterial3Api
 @AndroidEntryPoint
@@ -103,8 +92,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //LifecycleOwner()
 
         val permissionList = mutableListOf(
             Manifest.permission.ACCESS_FINE_LOCATION,

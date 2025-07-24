@@ -1,4 +1,4 @@
-package ru.vik.trials.coffee.ui.common
+package ru.vik.trials.coffee.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.border

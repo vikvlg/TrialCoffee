@@ -7,7 +7,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.asStateFlow
 import ru.vik.trials.coffee.R
-import ru.vik.trials.coffee.data.SignInUseCase
+import ru.vik.trials.coffee.domain.SignInUseCase
 import ru.vik.trials.coffee.domain.entities.UserAuthData
 import ru.vik.trials.coffee.presentation.BaseViewModel
 import ru.vik.trials.coffee.presentation.MutableUIStateFlow

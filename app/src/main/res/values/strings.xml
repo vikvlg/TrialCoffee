@@ -4,6 +4,8 @@
     <string name="screen_auth_title">Вход</string>
     <string name="screen_reg_title">Регистрация</string>
     <string name="screen_map_title">Карта</string>
+    <string name="screen_shops_title">Ближайшие кофейни</string>
+    <string name="screen_menu_title">Меню</string>
     <string name="navigation_back">Назад</string>
     <string name="navigation_menu_item">Меню</string>
 
@@ -23,6 +25,10 @@
     <string name="auth_password_different">Пароли не совпадают</string>
     <string name="auth_error_wrong">Пустой логин/пароль</string>
     <string name="auth_error_deny">Неверный логин/пароль</string>
+    <string name="auth_error_user_exists">Логин занят</string>
+    <string name="auth_need_auth">Пользователь не атворизован</string>
     <string name="auth_error_unk">Неизвестная ошибка</string>
+
+    <string name="shops_to_map">На карте</string>
 
 </resources>

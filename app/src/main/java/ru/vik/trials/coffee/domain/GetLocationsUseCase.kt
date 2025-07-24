@@ -1,6 +1,5 @@
-package ru.vik.trials.coffee.data
+package ru.vik.trials.coffee.domain
 
-import ru.vik.trials.coffee.domain.GetLocationsRepository
 import javax.inject.Inject
 
 class GetLocationsUseCase @Inject constructor(
