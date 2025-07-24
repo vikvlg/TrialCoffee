@@ -28,9 +28,10 @@ fun NavGraphBuilder.composable(
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
     content: @Composable (NavBackStackEntry) -> Unit
+    //content: @Composable AnimatedContentScope.(@JvmSuppressWildcards NavBackStackEntry) -> Unit
 ) {
     addDestination(
-        ComposeNavigator.Destination(provider[ComposeNavigator::class], content).apply {
+        ComposeNavigator.Destination(provider[ComposeNavigator::class]) { entry -> content(entry) }.apply {
             this.route = route
             this.label = label
             arguments.forEach { (argumentName, argument) ->
