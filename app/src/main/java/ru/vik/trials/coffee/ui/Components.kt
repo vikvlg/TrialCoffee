@@ -1,21 +1,36 @@
 package ru.vik.trials.coffee.ui
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,7 +38,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import ru.vik.trials.coffee.R
 
 @Composable
 fun InputText(@StringRes labelId: Int, @StringRes defTextId: Int, text: MutableState<TextFieldValue>, password: Boolean = false) {
@@ -69,3 +87,70 @@ fun InputText(@StringRes labelId: Int, @StringRes defTextId: Int, text: MutableS
     Spacer(modifier = Modifier.height(8.dp))
 }
 
+@Composable
+fun HorizontalNumberPicker(
+    //modifier: Modifier = Modifier,
+    height: Dp = 45.dp,
+    min: Int = 0,
+    max: Int = 10,
+    default: Int = min,
+    onValueChange: (Int) -> Unit = {}
+) {
+    val number = remember { mutableStateOf(default) }
+
+    Row {
+        PickerButton(
+            size = height,
+            drawable = R.drawable.ic_arrow_left,
+            enabled = number.value > min,
+            onClick = {
+                if (number.value > min) number.value--
+                onValueChange(number.value)
+            }
+        )
+
+        Text(
+            text = number.value.toString(),
+            fontSize = (height.value).sp,
+            modifier = Modifier
+                //.padding(10.dp)
+                .height(IntrinsicSize.Max)
+                .align(CenterVertically)
+        )
+
+        PickerButton(
+            size = height,
+            drawable = R.drawable.ic_arrow_right,
+            enabled = number.value < max,
+            onClick = {
+                if (number.value < max) number.value++
+                onValueChange(number.value)
+            }
+        )
+    }
+}
+
+@Composable
+fun PickerButton(
+    size: Dp = 45.dp,
+    @DrawableRes drawable: Int = R.drawable.ic_arrow_left,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {}
+) {
+    val contentDesc = LocalContext.current.resources.getResourceName(drawable)
+    val backgroundColor = if (enabled) MaterialTheme.colorScheme.secondary else Color.LightGray
+
+    Image(
+        painter = painterResource(id = drawable),
+        contentDescription = contentDesc,
+        modifier = Modifier
+            .padding(4.dp)
+            .background(backgroundColor, CircleShape)
+            .clip(CircleShape)
+            .size(size = size)
+            .clickable(
+                enabled = enabled,
+                onClick = { onClick() }
+            )
+    )
+}
