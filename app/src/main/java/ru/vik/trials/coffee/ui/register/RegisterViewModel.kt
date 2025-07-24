@@ -1,21 +1,20 @@
 package ru.vik.trials.coffee.ui.register
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.asStateFlow
 import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.domain.SignUpUseCase
 import ru.vik.trials.coffee.domain.entities.UserAuthData
 import ru.vik.trials.coffee.presentation.BaseViewModel
-import ru.vik.trials.coffee.presentation.MutableUIStateFlow
 import ru.vik.trials.coffee.presentation.UIState
 import javax.inject.Inject
 
+/** ViewModel для регистрации пользователя. */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
+    /** Сценарий для регистрации пользователя. */
     private val signUpUseCase: SignUpUseCase
 ) : BaseViewModel() {
 
@@ -31,12 +30,15 @@ class RegisterViewModel @Inject constructor(
     val email: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
     /** Введенный пароль. */
     val password: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
+    /** Введенный повторный пароль. */
     val repPassword: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
 
+    /** Обработчик кнопки "Регистрация". */
     fun onRegisterClick() {
         if (_uiState.value !is UIState.Idle)
             return
 
+        // Базовая проверка введенных данных
         var errorMsg = 0
         if (email.value.text.isBlank())
             errorMsg = R.string.auth_email_empty
@@ -55,12 +57,9 @@ class RegisterViewModel @Inject constructor(
 
         // Запрос на регистрацию
         signUpUseCase(UserAuthData(email.value.text, password.value.text)).collectNetworkRequest(_uiState, ::mapErrorCodes) {
-            Log.d(TAG, "signUpUseCase: $it")
         }
-
     }
 
-    /** Преобразователь кодов ошибок с APIшного на человеческий [@StringRes]. */
     override fun mapErrorCodes(code: Int): Int {
         return when (code) {
             ERROR_BLANK_DATA -> R.string.auth_error_wrong
