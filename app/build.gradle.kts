@@ -54,6 +54,7 @@ dependencies {
     // Dependency injection
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
+    //implementation(libs.androidx.navigation.dynamic.features.runtime)
     ksp(libs.hilt.compiler)
 
     implementation(libs.yandex.mapkit)
@@ -62,6 +63,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
 
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
