@@ -51,15 +51,6 @@ class RegisterScreen @Inject constructor()
         modifier: Modifier
     ) {
         this.navController = navController
-//        val arguments = listOf(
-//            navArgument("id") {
-//                type = NavType.LongType
-//            },
-//            navArgument("name") {
-//                type = NavType.StringType
-//                nullable = true
-//            }
-//        )
         navGraphBuilder.composable(route, navController.context.getString(R.string.screen_reg_title)) {
             RegisterBlock(
                 modifier = modifier,
