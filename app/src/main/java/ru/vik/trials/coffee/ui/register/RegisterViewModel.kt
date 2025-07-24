@@ -21,14 +21,15 @@ class RegisterViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "RegisterViewModel"
+        /** Код ошибки сервера: Некорректные данные в логине или пароле. */
         private const val ERROR_BLANK_DATA = 400
+        /** Код ошибки сервера: Такой пользователь уже существует. */
         private const val ERROR_USER_EXISTS = 406
     }
 
-    private val _uiState = MutableUIStateFlow<Unit>()
-    val uiState = _uiState.asStateFlow()
-
+    /** Введенный логин. */
     val email: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
+    /** Введенный пароль. */
     val password: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
     val repPassword: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
 
@@ -59,15 +60,12 @@ class RegisterViewModel @Inject constructor(
 
     }
 
-    fun resetState() {
-        _uiState.value = UIState.Idle()
-    }
-
-    private fun mapErrorCodes(code: Int): Int {
+    /** Преобразователь кодов ошибок с APIшного на человеческий [@StringRes]. */
+    override fun mapErrorCodes(code: Int): Int {
         return when (code) {
             ERROR_BLANK_DATA -> R.string.auth_error_wrong
             ERROR_USER_EXISTS -> R.string.auth_error_user_exists
-            else -> R.string.auth_error_unk
+            else -> super.mapErrorCodes(code)
         }
     }
 }

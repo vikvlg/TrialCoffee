@@ -3,7 +3,7 @@ package ru.vik.trials.coffee.domain
 import ru.vik.trials.coffee.domain.entities.UserAuthData
 import javax.inject.Inject
 
-/** Сценарий для атворизации на сервере. */
+/** Сценарий для авторизации на сервере. */
 class SignInUseCase @Inject constructor(
     private val repository: SignInRepository
 ) {

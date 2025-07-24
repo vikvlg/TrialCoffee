@@ -43,6 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.vik.trials.coffee.R
 
+/**
+ * Поле ввода текста.
+ *
+ * @param labelId Строка подсказка над полем.
+ * @param defTextId Отображаемая подсказка внутри поля, пока пользователь ничего не ввел.
+ * @param text Хранилище вводимого текста.
+ * @param password Флаг, что поле вода предназначено для пароля.
+ * */
 @Composable
 fun InputText(@StringRes labelId: Int, @StringRes defTextId: Int, text: MutableState<TextFieldValue>, password: Boolean = false) {
     val keyboardType = if (password) KeyboardType.Password else KeyboardType.Text
@@ -87,6 +95,17 @@ fun InputText(@StringRes labelId: Int, @StringRes defTextId: Int, text: MutableS
     Spacer(modifier = Modifier.height(8.dp))
 }
 
+/**
+ * Поле с горизонтальным выбором числа.
+ *
+ * Взято с просторов интернета.
+ *
+ * @param height Высота поля.
+ * @param min Минимальное число для выбора.
+ * @param max Максимальное число для выбора.
+ * @param default Значение по умолчанию.
+ * @param onValueChange Событие изменения выбранного числа.
+ */
 @Composable
 fun HorizontalNumberPicker(
     //modifier: Modifier = Modifier,
@@ -130,6 +149,14 @@ fun HorizontalNumberPicker(
     }
 }
 
+/**
+ * Кнопка для [HorizontalNumberPicker].
+ *
+ * @param size Размер кнопки.
+ * @param drawable Иконка кнопки.
+ * @param enabled Флаг доступности кнопки.
+ * @param onClick Событие нажатия кнопки.
+ */
 @Composable
 fun PickerButton(
     size: Dp = 45.dp,

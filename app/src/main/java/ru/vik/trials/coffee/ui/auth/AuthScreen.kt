@@ -33,28 +33,19 @@ import ru.vik.trials.coffee.presentation.UIState
 import ru.vik.trials.coffee.presentation.composable
 import ru.vik.trials.coffee.ui.InputText
 
+/** Экран с авторизацией. */
 class AuthScreen: Screen(Route.SignIn()) {
     companion object {
-        private const val TAG = "AuthScreen"
-
-        private var instance: AuthScreen? = null
-        fun getInstance(): AuthScreen {
-            var inst = instance
-            if (inst == null) {
-                inst = AuthScreen()
-                instance = inst
-            }
-            return inst
-        }
+        internal const val TAG = "AuthScreen"
     }
 
+    /** Обработчик кнопки "Регистрация". */
     fun onRegisterClick() {
-        Log.d(TAG, "onRegisterCLick")
         navController.navigate(Route.SignUp())
     }
 
+    /** Обработчик успешной авторизации на сервере. */
     fun onAuthSuccess() {
-        Log.d(TAG, "onAuthSuccess")
         navController.navigate(Route.Shops())
     }
 
@@ -73,8 +64,10 @@ class AuthScreen: Screen(Route.SignIn()) {
     }
 }
 
-private const val CLICK_REG_TAG = "AUTH_TO_REG"
+/** Тег слушателя нажатия ссылки "Регистрация". */
+private const val TAG_CLICK_REG = "AUTH_TO_REG"
 
+/** Верстка экрана авторизации. */
 @Composable
 fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
     val viewModel: AuthViewModel = hiltViewModel()
@@ -87,6 +80,7 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
                 return@collect
 
             when (newValue) {
+                // Ошибка авторизации
                 is UIState.Error -> {
                     val text = context.getString(newValue.error)
                     Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
@@ -95,11 +89,12 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
                     }
                 }
 
+                // Успешная авторизация
                 is UIState.Success -> {
                     screen.onAuthSuccess()
                 }
 
-                else -> Log.d("TAG", "LaunchedEffect uiState: $newValue")
+                else -> Log.d(AuthScreen.TAG, "uiState: $newValue")
             }
             viewModel.resetState()
         }
@@ -126,7 +121,7 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
         val textLinkReg = buildAnnotatedString {
             withLink(
                 link = LinkAnnotation.Clickable(
-                    tag = CLICK_REG_TAG,
+                    tag = TAG_CLICK_REG,
                     linkInteractionListener = { screen.onRegisterClick() } ,
                 ),
             ) {

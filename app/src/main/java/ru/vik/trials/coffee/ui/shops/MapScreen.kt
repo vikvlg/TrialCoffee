@@ -32,22 +32,13 @@ import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.UIState
 import ru.vik.trials.coffee.presentation.composable
 
+/** Экран кофеен на карте. */
 class MapScreen
     : Screen(Route.Map()),
     MapObjectTapListener {
 
     companion object {
         internal const val TAG = "MapScreen"
-
-        private var instance: MapScreen? = null
-        fun getInstance(): MapScreen {
-            var inst = instance
-            if (inst == null) {
-                inst = MapScreen()
-                instance = inst
-            }
-            return inst
-        }
     }
 
     override fun registerGraph(
@@ -64,24 +55,27 @@ class MapScreen
         }
     }
 
+    /** Обработчик клика по кофейне. */
     override fun onMapObjectTap(map: MapObject, point: Point): Boolean {
         val shop = map.userData as Location
         navController.navigate(Route.Menu(Pair(Route.ARG_MENU_ID, shop.id)))
-
         return true
     }
 }
 
+/** Верстка экрана кофеен на карте. */
 @Composable
 fun MapBlock(modifier: Modifier, screen: MapScreen) {
     val viewModel: ShopsViewModel = hiltViewModel()
     val context = LocalContext.current
     val mapView = remember { mutableStateOf<MapView?>(null) }
 
+    /** Очистка коффен на карте. */
     fun clearShops() {
         val map = mapView.value?.mapWindow?.map ?: return
         map.mapObjects.clear()
     }
+    /** Добавление кофейни на карту. */
     fun addCoffeeShop(shop: Location) {
         val map = mapView.value?.mapWindow?.map ?: return
         map.mapObjects.addPlacemark().apply {
@@ -94,6 +88,7 @@ fun MapBlock(modifier: Modifier, screen: MapScreen) {
             addTapListener(screen)
         }
     }
+    /** Перемещение карты к точке. */
     fun moveTo(shop: Location) {
         val map = mapView.value?.mapWindow?.map ?: return
         map.move(
@@ -131,7 +126,7 @@ fun MapBlock(modifier: Modifier, screen: MapScreen) {
     }
 
     LaunchedEffect("onLoad") {
-        // Запросим списком точек
+        // Запросим список кофеен
         viewModel.refresh()
 
         // Обработчик событий из viewModel
@@ -161,7 +156,7 @@ fun MapBlock(modifier: Modifier, screen: MapScreen) {
                         moveTo(shop)
                 }
 
-                else -> Log.d(MapScreen.TAG, "LaunchedEffect uiState: $newValue")
+                else -> Log.d(MapScreen.TAG, "uiState: $newValue")
             }
             viewModel.resetState()
         }

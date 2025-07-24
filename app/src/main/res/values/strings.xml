@@ -28,7 +28,7 @@
     <string name="auth_error_wrong">Пустой логин/пароль</string>
     <string name="auth_error_deny">Неверный логин/пароль</string>
     <string name="auth_error_user_exists">Логин занят</string>
-    <string name="auth_need_auth">Пользователь не атворизован</string>
+    <string name="auth_need_auth">Пользователь не авторизован</string>
     <string name="auth_error_unk">Неизвестная ошибка</string>
 
     <string name="shops_to_map">На карте</string>

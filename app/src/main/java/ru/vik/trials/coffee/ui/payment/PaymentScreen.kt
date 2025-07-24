@@ -1,9 +1,7 @@
 package ru.vik.trials.coffee.ui.payment
 
-import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,8 +35,10 @@ import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.composable
 import ru.vik.trials.coffee.ui.HorizontalNumberPicker
 
+/** Экран с оплатой заказа. */
 class PaymentScreen : Screen(Route.Payment()) {
 
+    /** Обработчик кнопки "Оплатить". */
     fun onPayClick() {
         val context = navController.context
         val text = context.getString(R.string.payment_pay_feature)
@@ -68,12 +68,12 @@ class PaymentScreen : Screen(Route.Payment()) {
     }
 }
 
+/** Верстка экрана заказа. */
 @Composable
 fun PaymentBlock(modifier: Modifier, payment: String?, screen: PaymentScreen) {
     val viewModel: PaymentViewModel = hiltViewModel()
     val items by viewModel.items.collectAsState()
     viewModel.setPayment(payment)
-    Log.d("TAG", "PaymentBlock items: ${items.size}")
 
     Scaffold(
         modifier = modifier
@@ -135,6 +135,8 @@ fun PaymentBlock(modifier: Modifier, payment: String?, screen: PaymentScreen) {
         }
     }
 }
+
+/** Верстка элемента списка заказа. */
 @Composable
 fun PaymentItem(item: Payment) {
     Card(

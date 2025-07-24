@@ -3,14 +3,12 @@ package ru.vik.trials.coffee.ui.menu
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.imageResource
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.domain.GetImageUseCase
 import ru.vik.trials.coffee.domain.GetMenuUseCase
@@ -19,54 +17,43 @@ import ru.vik.trials.coffee.domain.entities.MenuItem
 import ru.vik.trials.coffee.presentation.BaseViewModel
 import ru.vik.trials.coffee.presentation.MutableUIStateFlow
 import ru.vik.trials.coffee.presentation.Payment
-import ru.vik.trials.coffee.presentation.UIState
 import javax.inject.Inject
-import javax.inject.Singleton
 
+/** ViewModel для работы с меню кофейни. */
 @HiltViewModel
 class MenuViewModel @Inject constructor(
+    /** Сценарий получения меню. */
     private val getMenuUseCase: GetMenuUseCase,
+    /** Сценарий загрузки изображений. */
     private val getImageUseCase: GetImageUseCase
 ): BaseViewModel() {
 
     companion object {
+        /** Код ошибки сервера: Пользователь не авторизован. */
         private const val ERROR_NEED_AUTH = 401
     }
 
-    private val _uiState = MutableUIStateFlow<Unit>()
-    val uiState = _uiState.asStateFlow()
+    /** Состояние загрузки изображения. */
     private val _uiImageState = MutableUIStateFlow<Unit>()
 
+    /** Меню кофейни. */
     private val _menu = ArrayList<MenuItem>()
+    /** Меню кофейни. */
     var menu = MutableStateFlow(_menu)
 
+    /** Список загруженных изображений. */
     private val images = ArrayList<Image>()
 
-    /** Количество выбранных позиций <идентификатор, количество>. */
+    /** Количество выбранных позиций в меню <идентификатор, количество>. */
     private val counts: MutableMap<Int, Int> = mutableMapOf()
 
-//    init {
-//        _menu.apply {
-//            add(MenuItem(1, "Эспрессо", "", 200.0f))
-//            add(MenuItem(2, "Капучино", "", 300.0f))
-//            add(MenuItem(3, "Горячий шоколад", "", 250.0f))
-//            add(MenuItem(4, "Латте", "", 300.0f))
-//            add(MenuItem(5, "Американо", "", 200.0f))
-//            add(MenuItem(6, "Вода со льдом", "", 100.0f))
-//            add(MenuItem(7, "Чай черный", "", 200.0f))
-//        }
-//    }
-//    MenuItem(1, "Кофе 1", "https://tea.ru/upload/blog/0821/3108/coffee/01.jpg", 100.0f)
-//    MenuItem(2, "Кофе 2", "https://www.cre.ru/content/upload/news/15528982809641.jpeg", 150.0f)
-//    MenuItem(3, "Кофе 3", "https://ichef.bbci.co.uk/news/640/cpsprodpb/B079/production/_117677154_gettyimages-156586025.jpg", 240.0f)
-
+    /** Запрашивает меню кофейни. */
     fun refresh(shopId: Int) {
         clear()
-        // Запрос меню кофейни
+        // Запрос меню кофейни.
         getMenuUseCase(shopId).collectNetworkRequest(_uiState, ::mapErrorCodes) {
             if (it == null)
                 return@collectNetworkRequest
-            Log.d("TAG", "MenuItem(${it.id}, \"${it.name}\", \"${it.imageURL}\", ${it.price}f)")
             add(it)
 
             // Запрос картинки
@@ -75,16 +62,12 @@ class MenuViewModel @Inject constructor(
                     return@collectNetworkRequest
 
                 images.add(image)
-                Log.d("TAG", "image[${image.bytes.size}]: ${image.url}")
                 updateList()
             }
         }
     }
 
-    fun resetState() {
-        _uiState.value = UIState.Idle()
-    }
-
+    /** Возвращает загруженное изображение товара. */
     fun getImage(context: Context, url: String): ImageBitmap {
         val image = images.find { it.url == url }
             ?: return ImageBitmap.imageResource(context.resources, R.drawable.coffee_unk_128)
@@ -93,15 +76,31 @@ class MenuViewModel @Inject constructor(
         return bitmap.asImageBitmap()
     }
 
+    /**
+     * Возвращает сколько пользователь выбрал товара.
+     *
+     * @param item Товар.
+     * @return Количество товара.
+     * */
     fun getItemCount(item: MenuItem): Int {
         return counts[item.id] ?: 0
     }
 
+    /**
+     * Устанавливает сколько пользователь выбрал товара.
+     *
+     * @param item Товар.
+     * @param value Количество товара.
+     * */
     fun setItemCount(item: MenuItem, value: Int) {
         counts[item.id] = value
     }
 
-    fun getPayment(): String {
+    /** Возвращает сериализованные данные заказа.
+     *
+     * @return Список выбранных товаров в json-формате.
+     * */
+    fun getSerializedPayment(): String {
         val list = ArrayList<Payment>()
         for (item in _menu) {
             val count = getItemCount(item)
@@ -113,11 +112,17 @@ class MenuViewModel @Inject constructor(
         return Uri.encode(Gson().toJson(list))
     }
 
+    /** Очищает меню. */
     private fun clear() {
         _menu.clear()
         updateList()
     }
 
+    /**
+     * Добавляет товар к меню.
+     *
+     * Вызывает полное обновление меню.
+     * */
     private fun add(item: MenuItem) {
         _menu.add(item)
         updateList()
@@ -126,8 +131,8 @@ class MenuViewModel @Inject constructor(
     /**
      * Обновляет список меню.
      *
-     * Даже при изменении только 1 элемента списка, приходится обновлять весь список.
-     * TODO: Найти решение для обновления конкретных элементов.
+     * Даже при изменении только 1 элемента списка, приходится обновлять весь список,
+     * т.к. нормального решения не нашел.
      */
     private fun updateList() {
         val newList = ArrayList<MenuItem>()
@@ -139,14 +144,14 @@ class MenuViewModel @Inject constructor(
         menu.value = newList
     }
 
-    private fun mapErrorCodes(code: Int): Int {
+    override fun mapErrorCodes(code: Int): Int {
         return when (code) {
             ERROR_NEED_AUTH -> R.string.auth_need_auth
-            else -> R.string.auth_error_unk
+            else -> super.mapErrorCodes(code)
         }
     }
 
     private fun mapImageErrorCodes(code: Int): Int {
-        return R.string.auth_error_unk
+        return super.mapErrorCodes(code)
     }
 }

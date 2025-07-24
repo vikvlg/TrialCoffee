@@ -14,33 +14,39 @@ import ru.vik.trials.coffee.presentation.MutableUIStateFlow
 import ru.vik.trials.coffee.presentation.UIState
 import javax.inject.Inject
 
+/** ViewModel для работы с экраном авторизации. */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
+    /** Сценарий авторизации. */
     private val signInUseCase: SignInUseCase
 )
     : BaseViewModel() {
 
     companion object {
         private const val TAG = "AuthViewModel"
+
+        /** Код ошибки сервера: Некорректные данные в логине или пароле. */
         private const val ERROR_BLANK_DATA = 400
+        /** Код ошибки сервера: Логин/пароль не подходят. */
         private const val ERROR_WRONG_DATA = 404
     }
-
-    private val _uiState = MutableUIStateFlow<Unit>()
-    val uiState = _uiState.asStateFlow()
 
     // TODO: Проверить работу MutableSharedFlow.
     // TODO: Попробовать отследить изменение email или password.
 //    private val _uiState2 = MutableSharedFlow<Unit>()
 //    val uiState2 = _uiState2.asSharedFlow()
 
+    /** Введенный логин. */
     val email: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
+    /** Введенный пароль. */
     val password: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
 
+    /** Обработчик кнопки "Войти". */
     fun onAuthClick() {
         if (_uiState.value !is UIState.Idle)
             return
 
+        // Базовые проверки введенных данных
         var errorMsg = 0
         if (email.value.text.isBlank())
             errorMsg = R.string.auth_email_empty
@@ -61,15 +67,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun resetState() {
-        _uiState.value = UIState.Idle()
-    }
-
-    private fun mapErrorCodes(code: Int): Int {
+    override fun mapErrorCodes(code: Int): Int {
         return when (code) {
             ERROR_BLANK_DATA -> R.string.auth_error_wrong
             ERROR_WRONG_DATA -> R.string.auth_error_deny
-            else -> R.string.auth_error_unk
+            else -> super.mapErrorCodes(code)
         }
     }
 }

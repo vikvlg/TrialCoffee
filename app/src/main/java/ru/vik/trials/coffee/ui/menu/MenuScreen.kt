@@ -1,6 +1,5 @@
 package ru.vik.trials.coffee.ui.menu
 
-import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -40,32 +39,14 @@ import ru.vik.trials.coffee.presentation.UIState
 import ru.vik.trials.coffee.presentation.composable
 import ru.vik.trials.coffee.ui.HorizontalNumberPicker
 
+/** Экран с меню кофейни. */
 class MenuScreen()
     : Screen(Route.Menu()) {
 
-        //: Screen(Route.Menu()
-
-    companion object {
-        private var instance: MenuScreen? = null
-        fun getInstance(): MenuScreen {
-            var inst = instance
-            if (inst == null) {
-                inst = MenuScreen()
-                instance = inst
-            }
-            return inst
-        }
-    }
-
+    /** Обработчик кнопки "К оплате". */
     fun onPaymentClick(payment: String) {
-        Log.d("TAG", "onPaymentClick")
-//        //val list = listOf(1, 2, 3)
-//        navController.currentBackStackEntry?.savedStateHandle?.set("data", 123)
-//        Log.d("TAG", "send size: ${navController.currentBackStackEntry?.savedStateHandle?.keys()?.size}")
-
-//        val menuItem = MenuItem(1, "Эспрессо", "", 200.0f)
-//        val jsonData = Uri.encode(Gson().toJson(menuItem))
-
+        // Данные будем передавать в json-сериализованном виде через путь навигации.
+        // Пробовал другие варианты (BackStack), но не получилось.
         navController.navigate(route = Route.Payment(Route.ARG_PAYMENT_DATA, payment))
     }
 
@@ -75,7 +56,6 @@ class MenuScreen()
         modifier: Modifier
     ) {
         this.navController = navController
-        Log.d("TAG", "route: $route")
         navGraphBuilder.composable(
             route = route,
             label = navController.context.getString(R.string.screen_menu_title),
@@ -91,16 +71,14 @@ class MenuScreen()
     }
 }
 
+/** Верстка экрана меню. */
 @Composable
 fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
     val context = LocalContext.current
     val viewModel: MenuViewModel = hiltViewModel()
-    //val paymentViewModel: PaymentViewModel = hiltViewModel()
     val items by viewModel.menu.collectAsState()
-    // Запросим меню
+    // Запросим меню кофейни
     viewModel.refresh(shopId)
-
-    Log.d("TAG", "Menu ViewModel: $viewModel")
 
     LaunchedEffect("onLoad") {
         // Обработчик событий из viewModel
@@ -130,7 +108,7 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    onClick = { screen.onPaymentClick(viewModel.getPayment()) },
+                    onClick = { screen.onPaymentClick(viewModel.getSerializedPayment()) },
                     modifier = Modifier
                         .fillMaxWidth(fraction = 0.9f),
                     content = {
@@ -152,7 +130,6 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 content = {
-                    Log.d("TAG", "menu size: ${items.size}")
                     items(items) {
                         MenuItem(it, screen)
                     }
@@ -162,10 +139,10 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
     }
 }
 
+/** Верстка пунктов меню. */
 @Composable
 fun MenuItem(item: MenuItem, screen: MenuScreen) {
     val viewModel: MenuViewModel = hiltViewModel()
-    Log.d("TAG", "MenuItem ViewModel: $viewModel")
 
     Card {
         Column {

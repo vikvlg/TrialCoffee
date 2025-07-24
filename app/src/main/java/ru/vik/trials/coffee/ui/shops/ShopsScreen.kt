@@ -1,9 +1,7 @@
 package ru.vik.trials.coffee.ui.shops
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,19 +9,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -35,25 +29,15 @@ import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.composable
 
 
+/** Экран со списком кофеен. */
 class ShopsScreen : Screen(Route.Shops()) {
 
-    companion object {
-        private var instance: ShopsScreen? = null
-        fun getInstance(): ShopsScreen {
-            var inst = instance
-            if (inst == null) {
-                inst = ShopsScreen()
-                instance = inst
-            }
-            return inst
-        }
-    }
-
+    /** Обработчик выбора кофейни. */
     fun onShopClick(id: Int) {
-        Log.d("TAG", "clickable: $id")
         navController.navigate(Route.Menu(Pair(Route.ARG_MENU_ID, id)))
     }
 
+    /** Обработик кнопки "На карте". */
     fun onMapClick() {
         navController.navigate(Route.Map())
     }
@@ -73,6 +57,7 @@ class ShopsScreen : Screen(Route.Shops()) {
     }
 }
 
+/** Верстка экрана со списком кофеен. */
 @Composable
 fun ShopsBlock(modifier: Modifier, screen: ShopsScreen) {
     val viewModel: ShopsViewModel = hiltViewModel()
@@ -113,6 +98,8 @@ fun ShopsBlock(modifier: Modifier, screen: ShopsScreen) {
         }
     }
 }
+
+/** Верстка элементов списка. */
 @Composable
 fun ShopItem(shop: Location, screen: ShopsScreen) {
     val viewModel: ShopsViewModel = hiltViewModel()

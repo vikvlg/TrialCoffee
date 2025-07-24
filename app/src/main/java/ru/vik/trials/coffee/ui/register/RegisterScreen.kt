@@ -26,24 +26,13 @@ import ru.vik.trials.coffee.presentation.composable
 import ru.vik.trials.coffee.ui.InputText
 import javax.inject.Inject
 
+/** Экран регистрации пользователя. */
 class RegisterScreen @Inject constructor()
     : Screen(Route.SignUp()) {
 
     companion object {
-        private const val TAG = "Register"
-
-        private var instance: RegisterScreen? = null
-        fun getInstance(): RegisterScreen {
-            var inst = instance
-            if (inst == null) {
-                inst = RegisterScreen()
-                instance = inst
-            }
-            return inst
-        }
+        internal const val TAG = "Register"
     }
-
-    @Inject lateinit var viewModel: RegisterViewModel
 
     override fun registerGraph(
         navGraphBuilder: NavGraphBuilder,
@@ -59,23 +48,26 @@ class RegisterScreen @Inject constructor()
         }
     }
 
+    /** Обработчик успешной регистрации. */
     fun onRegisterSuccess() {
         navController.navigate(Route.Shops())
     }
 }
 
+/** Верстка экрана регистрации. */
 @Composable
 fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
     val viewModel: RegisterViewModel = hiltViewModel()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        // Обработчик событий из viewModel
+        // Обработчик событий запроса регистрации
         viewModel.uiState.collect { newValue ->
             if (newValue is UIState.Idle || newValue is UIState.Loading)
                 return@collect
 
             when (newValue) {
+                // Ошибка регистрации
                 is UIState.Error -> {
                     val text = context.getString(newValue.error)
                     Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
@@ -84,11 +76,12 @@ fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
                     }
                 }
 
+                // Успешная регистрация
                 is UIState.Success -> {
                     screen.onRegisterSuccess()
                 }
 
-                else -> Log.d("TAG", "LaunchedEffect uiState: $newValue")
+                else -> Log.d(RegisterScreen.TAG, "uiState: $newValue")
             }
             viewModel.resetState()
         }

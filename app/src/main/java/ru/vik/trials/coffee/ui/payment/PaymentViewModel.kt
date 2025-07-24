@@ -1,6 +1,5 @@
 package ru.vik.trials.coffee.ui.payment
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,23 +10,24 @@ import java.lang.reflect.Type
 import javax.inject.Inject
 
 
+/** ViewModel для работы с заказом. */
 @HiltViewModel
 class PaymentViewModel @Inject constructor()
     : BaseViewModel() {
 
-//    private var _items = ArrayList<Payment>()
+    /** Список заказа. */
     var items = MutableStateFlow<List<Payment>>(listOf())
 
+    /**
+     * Десериализует данные по заказу.
+     *
+     * @param payment Данные по заказу в json-формате.
+     * */
     fun setPayment(payment: String?) {
         if (payment == null)
             return
 
         val listType: Type? = object : TypeToken<ArrayList<Payment?>?>() {}.type
         items.value = Gson().fromJson(payment, listType)
-
-//        Log.d("TAG", "payment size: ${items.value.size}")
-//        for (it in items.value) {
-//            Log.d("TAG", "   ${it.name} ${it.price} ${it.count}")
-//        }
     }
 }
