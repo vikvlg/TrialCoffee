@@ -42,6 +42,7 @@ import ru.vik.trials.coffee.presentation.register
 import ru.vik.trials.coffee.ui.auth.AuthScreen
 import ru.vik.trials.coffee.ui.common.checkPermissions
 import ru.vik.trials.coffee.ui.menu.MenuScreen
+import ru.vik.trials.coffee.ui.payment.PaymentScreen
 import ru.vik.trials.coffee.ui.register.RegisterScreen
 import ru.vik.trials.coffee.ui.shops.MapScreen
 import ru.vik.trials.coffee.ui.shops.ShopsScreen
@@ -245,6 +246,10 @@ class MainActivity : ComponentActivity() {
                                 modifier)
                             register(
                                 MenuScreen.getInstance(),
+                                navController,
+                                modifier)
+                            register(
+                                PaymentScreen(),
                                 navController,
                                 modifier)
                         }
