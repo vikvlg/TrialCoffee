@@ -1,7 +1,5 @@
 package ru.vik.trials.coffee.presentation
 
-import android.util.Log
-
 class Route(val route: String) {
 
     companion object {
@@ -9,7 +7,11 @@ class Route(val route: String) {
         val SignUp = Route("signup")
         val Shops = Route("shops")
         val Map = Route("map")
-        val Menu = Route("menu/{id}")
+        val Menu = Route("menu/{$ARG_MENU_ID}")
+        val Payment = Route("payment/{$ARG_PAYMENT_DATA}")
+
+        const val ARG_MENU_ID = "id"
+        const val ARG_PAYMENT_DATA = "data"
     }
 
     operator fun invoke(): String {
