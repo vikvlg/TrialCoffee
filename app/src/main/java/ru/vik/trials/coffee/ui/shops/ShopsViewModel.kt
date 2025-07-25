@@ -1,9 +1,16 @@
 package ru.vik.trials.coffee.ui.shops
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.domain.GetGeoDistanceUseCase
+import ru.vik.trials.coffee.domain.GetGeoLocationUseCase
 import ru.vik.trials.coffee.domain.GetLocationsUseCase
+import ru.vik.trials.coffee.domain.entities.GeoPoint
 import ru.vik.trials.coffee.domain.entities.Location
 import ru.vik.trials.coffee.presentation.BaseViewModel
 import javax.inject.Inject
@@ -12,10 +19,16 @@ import javax.inject.Inject
 @HiltViewModel
 class ShopsViewModel @Inject constructor(
     /** Сценарий получения списка кофеен. */
-    private val getLocationsUseCase: GetLocationsUseCase
+    private val getLocationsUseCase: GetLocationsUseCase,
+    /** Сценарий получения местоположения пользователя. */
+    private val getGeoLocationUseCase: GetGeoLocationUseCase,
+    /** Сценарий получения расстояния между точками. */
+    private val getGeoDistanceUseCase: GetGeoDistanceUseCase
 ) : BaseViewModel() {
 
         companion object {
+            private const val TAG = "ShopsViewModel"
+
             /** Код ошибки сервера: Пользователь не авторизован. */
             private const val ERROR_NEED_AUTH = 401
         }
@@ -25,6 +38,8 @@ class ShopsViewModel @Inject constructor(
     /** Список кофеен. */
     var shops = MutableStateFlow(_shops)
 
+    var currentGeoLocation: GeoPoint? = null
+
     /** Получает список кофеен. */
     fun refresh() {
         clear()
@@ -33,10 +48,23 @@ class ShopsViewModel @Inject constructor(
             if (it != null)
                 add(it)
         }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            getGeoLocationUseCase().collect {
+                if (it.isSuccess) {
+                    currentGeoLocation = it.value
+                    updateList()
+                } else {
+                    // Сообщить об ошибке?
+                    Log.d(TAG, "geo location error: ${it.error}")
+                }
+            }
+        }
     }
 
-    fun getDistance(loc: Location): Int? {
-        return null
+    fun getDistance(loc: Location): Double? {
+        val curLoc = currentGeoLocation ?: return null
+        return getGeoDistanceUseCase(curLoc, loc.point)
     }
 
     /** Очищает список кофеен. */
