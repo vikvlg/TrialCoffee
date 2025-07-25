@@ -2,6 +2,7 @@ package ru.vik.trials.coffee.ui.shops
 
 import android.util.Log
 import android.view.Gravity
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -178,30 +179,44 @@ fun MapBlock(modifier: Modifier, screen: MapScreen) {
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            Row {
-                FloatingActionButton(
-                    modifier = Modifier.padding(8.dp),
-                    onClick = ::moveToUser
-                ) {
-                    Icon(Icons.Filled.Person, stringResource(R.string.map_to_user))
-                }
-                FloatingActionButton(
-                    modifier = Modifier.padding(8.dp),
-                    onClick = ::moveToShops
-                ) {
-                    Icon(Icons.Filled.Place, stringResource(R.string.map_to_locations))
+            if (mapView.value != null) {
+                Row {
+                    FloatingActionButton(
+                        modifier = Modifier.padding(8.dp),
+                        onClick = ::moveToUser
+                    ) {
+                        Icon(Icons.Filled.Person, stringResource(R.string.map_to_user))
+                    }
+                    FloatingActionButton(
+                        modifier = Modifier.padding(8.dp),
+                        onClick = ::moveToShops
+                    ) {
+                        Icon(Icons.Filled.Place, stringResource(R.string.map_to_locations))
+                    }
                 }
             }
         }
     ) { padding ->
         // INFO: Способ подключения ЯндексКарт в Copmose-приложение подсмотрено на github у Kratos1013,
         // https://github.com/yandex/mapkit-android-demo/issues/317,
-        // но работает не везде: на эмуляторе Pixel 6 API 28, программа вылетает с исключением.
+        // но работает не везде: на эмуляторе Pixel 6 API 28, программа вылетает с исключением
+        // RuntimeException: eglChooseConfig() failed; Got EGL error 12288
+        // из com.yandex.runtime.view.internal.EGLConfigChooserImpl.chooseConfig().
         AndroidView(
-            factory = {MapView(it)},
+            factory = {
+                try {
+                    MapView(it)
+                } catch (ex: AssertionError) {
+                    // Если проблема с картой (ключ не указан), то выведем сообщение с ошибкой
+                    TextView(it).apply {
+                        text = ex.message
+                    }
+                }
+            },
             modifier = Modifier.fillMaxSize().padding(padding)
         ) {
-            mapView.value = it
+            if (it is MapView)
+                mapView.value = it
         }
     }
 

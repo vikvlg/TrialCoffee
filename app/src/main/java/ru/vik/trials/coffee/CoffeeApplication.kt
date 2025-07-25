@@ -13,7 +13,7 @@ class CoffeeApplication
     override fun onCreate() {
         super.onCreate()
 
-        // TODO: Проверить наличие ключа.
+        // Ключ для ЯндексКарты
         MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
     }
 }
