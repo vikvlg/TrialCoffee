@@ -24,8 +24,7 @@ class GetLocationsRepositoryImpl @Inject constructor(
                     emit(Resp(Location(loc.id, loc.name, GeoPoint(loc.point.latitude, loc.point.longitude))))
                 }
             } ?: run {
-                // "Неизвестная ошибка"
-                emit(Resp(400))
+                emit(Resp(HttpErrors.UNKNOWN))
             }
         } else {
             emit(Resp(res.code()))

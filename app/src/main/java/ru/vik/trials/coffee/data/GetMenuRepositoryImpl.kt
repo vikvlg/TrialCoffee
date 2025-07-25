@@ -24,10 +24,9 @@ class GetMenuRepositoryImpl @Inject constructor(
                     emit(Resp(MenuItem(menu.id, menu.name, menu.imageURL, menu.price)))
                 }
             } ?: run {
-                emit(Resp(400))
+                emit(Resp(HttpErrors.UNKNOWN))
             }
         } else {
-            Log.d("GetMenuRepositoryImpl", "error: ${res.code()}")
             emit(Resp(res.code()))
         }
     }
