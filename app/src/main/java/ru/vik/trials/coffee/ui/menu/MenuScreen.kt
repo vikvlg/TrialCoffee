@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -109,6 +111,7 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
             ) {
                 Button(
                     onClick = { screen.onPaymentClick(viewModel.getSerializedPayment()) },
+                    enabled = !items.isEmpty(),
                     modifier = Modifier
                         .fillMaxWidth(fraction = 0.9f),
                     content = {
@@ -124,17 +127,28 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxWidth(0.9f),
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                content = {
-                    items(items) {
-                        MenuItem(it, screen)
+            if (items.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = stringResource(R.string.menu_empty),
+                    textAlign = TextAlign.Center,
+                    style = typography.titleLarge
+                )
+            }
+            else {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxWidth(0.9f),
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    content = {
+                        items(items) {
+                            MenuItem(it, screen)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

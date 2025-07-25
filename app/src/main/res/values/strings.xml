@@ -34,20 +34,22 @@
     <string name="auth_need_auth">Пользователь не авторизован</string>
     <string name="auth_error_unk">Неизвестная ошибка</string>
 
+    <string name="shops_empty">Список кофеен пуст</string>
     <string name="shops_to_map">На карте</string>
     <string name="shops_distance">%.1f км от вас</string>
 
     <string name="map_to_user">К пользователю</string>
     <string name="map_to_locations">К кофейням</string>
-    <string name="map_empty_geo">К кофейням</string>
+    <string name="map_empty_geo">Ваше положение неизвестно</string>
     <string name="map_you">Вы</string>
 
+    <string name="menu_empty">Здесь ничего нет.\nВозможно, кофейня не работает.</string>
     <string name="menu_to_payment">Перейти к оплате</string>
     <string name="menu_price_format">%.2f руб</string>
 
     <string name="payment_empty">Ваш заказ пуст</string>
     <string name="payment_hint">Время ожидания заказа 15 минут!\nСпасибо, что выбрали нас!</string>
     <string name="payment_pay">Оплатить</string>
-    <string name="payment_pay_feature">Ождитай оплату в следующих версиях программы</string>
+    <string name="payment_pay_feature">Будет реализовано позднее…</string>
 
 </resources>

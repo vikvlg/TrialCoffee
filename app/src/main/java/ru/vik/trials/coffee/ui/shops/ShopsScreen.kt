@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -87,13 +88,24 @@ fun ShopsBlock(modifier: Modifier, screen: ShopsScreen) {
             }
         }
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            items(items) {
-                ShopItem(it, screen)
+        if (items.isEmpty()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = stringResource(R.string.shops_empty),
+                textAlign = TextAlign.Center,
+                style = typography.titleLarge
+            )
+        }
+        else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(items) {
+                    ShopItem(it, screen)
+                }
             }
         }
     }
