@@ -63,7 +63,6 @@ class AuthViewModel @Inject constructor(
 
         // Запрос на авторизацию
         signInUseCase(UserAuthData(email.value.text, password.value.text)).collectNetworkRequest(_uiState, ::mapErrorCodes) {
-            Log.d("TAG", "signInUseCase: $it")
         }
     }
 

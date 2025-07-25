@@ -115,8 +115,10 @@ fun ShopItem(shop: Location, screen: ShopsScreen) {
         Column {
             val dist = viewModel.getDistance(shop)
             Text(text = shop.name, style = typography.headlineLarge)
-            if (dist != null)
-                Text(text = "$dist км от вас", style = typography.bodySmall)
+            if (dist != null) {
+                val format = stringResource(R.string.shops_distance)
+                Text(text = String.format(format, dist), style = typography.bodySmall)
+            }
         }
     }
 }

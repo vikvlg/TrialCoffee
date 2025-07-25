@@ -120,7 +120,7 @@ fun HorizontalNumberPicker(
     Row {
         PickerButton(
             size = height,
-            drawable = R.drawable.ic_arrow_left,
+            drawable = R.drawable.ic_minus,
             enabled = number.value > min,
             onClick = {
                 if (number.value > min) number.value--
@@ -139,7 +139,7 @@ fun HorizontalNumberPicker(
 
         PickerButton(
             size = height,
-            drawable = R.drawable.ic_arrow_right,
+            drawable = R.drawable.ic_plus,
             enabled = number.value < max,
             onClick = {
                 if (number.value < max) number.value++
@@ -160,7 +160,7 @@ fun HorizontalNumberPicker(
 @Composable
 fun PickerButton(
     size: Dp = 45.dp,
-    @DrawableRes drawable: Int = R.drawable.ic_arrow_left,
+    @DrawableRes drawable: Int,
     enabled: Boolean = true,
     onClick: () -> Unit = {}
 ) {

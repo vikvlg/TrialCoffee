@@ -10,6 +10,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.get
 
+// Идея взята с https://habr.com/ru/companies/moex/articles/586192/.
+
+/** Регистрирует экран в графе навигации. */
 fun NavGraphBuilder.register(
     screenApi: Screen,
     navController: NavHostController,
@@ -22,6 +25,12 @@ fun NavGraphBuilder.register(
     )
 }
 
+/**
+ * Добавляет экран в граф навигации.
+ *
+ * @param route Маршрут навигации к экрану.
+ * @param label Заголовок экрана в top-баре.
+ * */
 fun NavGraphBuilder.composable(
     route: String,
     label: String,
