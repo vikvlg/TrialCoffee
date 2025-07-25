@@ -1,12 +1,13 @@
 package ru.vik.trials.coffee
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -25,11 +26,9 @@ import androidx.navigation.NavDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import ru.vik.trials.coffee.presentation.Consts
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.register
 import ru.vik.trials.coffee.ui.auth.AuthScreen
-import ru.vik.trials.coffee.ui.common.checkPermissions
 import ru.vik.trials.coffee.ui.menu.MenuScreen
 import ru.vik.trials.coffee.ui.payment.PaymentScreen
 import ru.vik.trials.coffee.ui.register.RegisterScreen
@@ -45,13 +44,26 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
     }
 
+    val requestMultiplePermissions = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        var granted = false
+        permissions.entries.forEach {
+            granted = granted || it.value
+        }
+        if (!granted) {
+            Toast.makeText(this, getString(R.string.permissions_not_granted), Toast.LENGTH_LONG).apply {
+                setGravity(Gravity.CENTER_VERTICAL, 0, 0)
+                show()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val permissionList = mutableListOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION)
-        checkPermissions(permissionList)
+        // Запросим разрешения для работы с местоположением
+        requestMultiplePermissions.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
 
         enableEdgeToEdge()
         setContent {
@@ -71,7 +83,6 @@ class MainActivity : ComponentActivity() {
                     }
                 })
 
-                //MapTest(Modifier.fillMaxSize())
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -85,7 +96,7 @@ class MainActivity : ComponentActivity() {
                                 if (showBackArrow.value)
                                     IconButton(
                                         onClick = {
-                                            // BUG: Без этой проверки глючит (в самом начале backQueue содержит 2 элемента).
+                                            // BUG: Без этой проверки глючит, т.к. в самом начале backQueue содержит 2 элемента.
                                             if (navController.previousBackStackEntry != null)
                                                 navController.popBackStack()
                                         }
@@ -96,7 +107,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                             },
-//                            // Меню экрана.
+//                            // Топ-меню экрана.
 //                            actions = {
 //                                IconButton(onClick = { /* doSomething() */ }) {
 //                                    Icon(
@@ -141,51 +152,6 @@ class MainActivity : ComponentActivity() {
                     },
                 )
             }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            Consts.PERMISSION_REQUEST_CODE -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Log.d(TAG, "Permission is granted")
-                    // Permission is granted. Continue the action or workflow
-                    // in your app.
-                } else {
-                    // Explain to the user that the feature is unavailable because
-                    // the feature requires a permission that the user has denied.
-                    // At the same time, respect the user's decision. Don't link to
-                    // system settings in an effort to convince the user to change
-                    // their decision.
-                    Log.d(TAG, "Permission is NOT granted")
-                }
-                return
-            }
-
-            // Add other 'when' lines to check for other
-            // permissions this app might request.
-            else -> {
-                Log.d(TAG, "Permission is unknown")
-                // Ignore all other requests.
-            }
-        }
-
-        Log.d(TAG, "onRequestPermissionsResult. requestCode: $requestCode")
-        Log.d(TAG, "permissions:")
-        for (p in permissions) {
-            Log.d(TAG, "   $p")
-        }
-        Log.d(TAG, "permissions grantResults:")
-        for (r in grantResults) {
-            Log.d(TAG, "   $r")
         }
     }
 }

@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">TrialCoffee</string>
+
+    <string name="permissions_not_granted">Приложение не обладает необходимыми разрешениями</string>
+
     <string name="screen_title">Navigation Demo</string>
     <string name="screen_auth_title">Вход</string>
     <string name="screen_reg_title">Регистрация</string>
