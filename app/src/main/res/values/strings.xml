@@ -32,6 +32,7 @@
     <string name="auth_error_unk">Неизвестная ошибка</string>
 
     <string name="shops_to_map">На карте</string>
+    <string name="shops_distance">%.1f км от вас</string>
 
     <string name="menu_to_payment">Перейти к оплате</string>
     <string name="menu_price_format">%.2f руб</string>
