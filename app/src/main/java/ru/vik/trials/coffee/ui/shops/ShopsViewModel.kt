@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.domain.GetGeoDistanceUseCase
@@ -38,7 +39,10 @@ class ShopsViewModel @Inject constructor(
     /** Список кофеен. */
     var shops = MutableStateFlow(_shops)
 
-    var currentGeoLocation: GeoPoint? = null
+    /** Текущее местоположение пользователя. */
+    private var _userLocation = MutableStateFlow<GeoPoint?>(null)
+    /** Текущее местоположение пользователя. */
+    val userLocation: StateFlow<GeoPoint?> = _userLocation
 
     /** Получает список кофеен. */
     fun refresh() {
@@ -52,7 +56,10 @@ class ShopsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             getGeoLocationUseCase().collect {
                 if (it.isSuccess) {
-                    currentGeoLocation = it.value
+                    // Оповестим об изменении положении пользователя
+                    _userLocation.emit(it.value)
+                    // Для списка коффен приходится полностью обновлять список,
+                    // чтобы отобразить расстояние до них, т.к. более лучшеего решения пока не нашел.
                     updateList()
                 } else {
                     // Сообщить об ошибке?
@@ -62,8 +69,14 @@ class ShopsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Возвращает расстояние от пользователя до точки.
+     *
+     * @param loc Интересуемая точка.
+     * @return Расстояние в км. Если местоположении неизвестно, то null.
+     * */
     fun getDistance(loc: Location): Double? {
-        val curLoc = currentGeoLocation ?: return null
+        val curLoc = _userLocation.value ?: return null
         return getGeoDistanceUseCase(curLoc, loc.point)
     }
 

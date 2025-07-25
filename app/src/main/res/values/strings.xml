@@ -34,6 +34,11 @@
     <string name="shops_to_map">На карте</string>
     <string name="shops_distance">%.1f км от вас</string>
 
+    <string name="map_to_user">К пользователю</string>
+    <string name="map_to_locations">К кофейням</string>
+    <string name="map_empty_geo">К кофейням</string>
+    <string name="map_you">Вы</string>
+
     <string name="menu_to_payment">Перейти к оплате</string>
     <string name="menu_price_format">%.2f руб</string>
 
