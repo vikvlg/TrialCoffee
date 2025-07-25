@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.model.BearerToken
 import ru.vik.trials.coffee.data.preferences.UserDataPreferences
 import ru.vik.trials.coffee.domain.GetLocationsRepository
+import ru.vik.trials.coffee.domain.entities.GeoPoint
 import ru.vik.trials.coffee.domain.entities.Location
 import ru.vik.trials.coffee.domain.entities.Resp
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class GetLocationsRepositoryImpl @Inject constructor(
         if (res.isSuccessful) {
             res.body()?.let {
                 for (loc in it) {
-                    emit(Resp(Location(loc.id, loc.name, Location.Point(loc.point.latitude, loc.point.longitude))))
+                    emit(Resp(Location(loc.id, loc.name, GeoPoint(loc.point.latitude, loc.point.longitude))))
                 }
             } ?: run {
                 // "Неизвестная ошибка"

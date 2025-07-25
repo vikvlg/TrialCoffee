@@ -7,14 +7,5 @@ class Location(
     /** Название. */
     val name: String,
     /** Координаты. */
-    val point: Point
-) {
-
-    /** Координаты кофейни. */
-    class Point(
-        /** Широта. */
-        val latitude: Double,
-        /** Долгота. */
-        val longitude: Double
-    )
-}
+    val point: GeoPoint
+)
