@@ -1,5 +1,6 @@
 package ru.vik.trials.coffee.presentation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NamedNavArgument
@@ -9,8 +10,34 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.get
+import java.lang.reflect.Constructor
 
 // Идея взята с https://habr.com/ru/companies/moex/articles/586192/.
+
+/** Регистрирует экраны в графе навигации. */
+fun NavGraphBuilder.register(
+    classes: Array<Class<*>>,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    for (cl in classes) {
+        try {
+            val constructor: Constructor<*> = cl.getConstructor()
+            val screen: Screen? = constructor.newInstance() as? Screen
+            if (screen == null)
+                continue
+
+            screen.registerGraph(
+                navGraphBuilder = this,
+                navController = navController,
+                modifier = modifier
+            )
+        }
+        catch (ex: Exception) {
+            Log.e("NavExt", "Register graph exception for class $cl", ex)
+        }
+    }
+}
 
 /** Регистрирует экран в графе навигации. */
 fun NavGraphBuilder.register(

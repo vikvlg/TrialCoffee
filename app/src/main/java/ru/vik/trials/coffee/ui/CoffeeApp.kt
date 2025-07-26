@@ -92,29 +92,17 @@ fun CoffeeApp() {
                 startDestination = Route.SignIn()
             ) {
                 register(
-                    AuthScreen(),
+                    classes = arrayOf(
+                        AuthScreen::class.java,
+                        RegisterScreen::class.java,
+                        MapScreen::class.java,
+                        ShopsScreen::class.java,
+                        MenuScreen::class.java,
+                        PaymentScreen::class.java,
+                    ),
                     navController,
-                    modifier)
-                register(
-                    RegisterScreen(),
-                    navController,
-                    modifier)
-                register(
-                    MapScreen(),
-                    navController,
-                    modifier)
-                register(
-                    ShopsScreen(),
-                    navController,
-                    modifier)
-                register(
-                    MenuScreen(),
-                    navController,
-                    modifier)
-                register(
-                    PaymentScreen(),
-                    navController,
-                    modifier)
+                    modifier
+                )
             }
         },
     )
