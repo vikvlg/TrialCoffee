@@ -81,7 +81,7 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
             when (newValue) {
                 // Ошибка авторизации
                 is UIState.Error -> {
-                    AppToast.make(context, newValue.error)
+                    AppToast.show(context, newValue.error)
                 }
 
                 // Успешная авторизация

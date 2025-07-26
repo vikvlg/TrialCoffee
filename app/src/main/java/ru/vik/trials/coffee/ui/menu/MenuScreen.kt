@@ -89,7 +89,7 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
 
             // Ошибка получения данных
             if (newValue is UIState.Error) {
-                AppToast.make(context, newValue.error)
+                AppToast.show(context, newValue.error)
             }
             viewModel.resetState()
         }

@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             granted = granted || it.value
         }
         if (!granted) {
-            AppToast.make(this, R.string.permissions_not_granted, true)
+            AppToast.show(this, R.string.permissions_not_granted, true)
         }
     }
 

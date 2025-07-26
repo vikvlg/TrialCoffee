@@ -1,8 +1,6 @@
 package ru.vik.trials.coffee.ui.register
 
 import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,7 +68,7 @@ fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
             when (newValue) {
                 // Ошибка регистрации
                 is UIState.Error -> {
-                    AppToast.make(context, newValue.error)
+                    AppToast.show(context, newValue.error)
                 }
 
                 // Успешная регистрация

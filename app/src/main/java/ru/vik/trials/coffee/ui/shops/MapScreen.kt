@@ -78,7 +78,7 @@ class MapScreen
 
     fun showError(@StringRes id: Int) {
         val context = navController.context
-        AppToast.make(context, id)
+        AppToast.show(context, id)
     }
 }
 

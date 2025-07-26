@@ -40,7 +40,7 @@ class PaymentScreen : Screen(Route.Payment()) {
     /** Обработчик кнопки "Оплатить". */
     fun onPayClick() {
         val context = navController.context
-        AppToast.make(context, R.string.payment_pay_feature, true)
+        AppToast.show(context, R.string.payment_pay_feature, true)
     }
 
     override fun registerGraph(
