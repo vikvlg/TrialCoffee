@@ -1,7 +1,6 @@
 package ru.vik.trials.coffee.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.model.AuthReq
 import ru.vik.trials.coffee.data.preferences.UserDataPreferences
 import ru.vik.trials.coffee.domain.SignInRepository
@@ -15,7 +14,7 @@ class SignInRepositoryImpl @Inject constructor(
     private val userDataPreferences: UserDataPreferences
 ) : SignInRepository {
 
-    override fun signIn(authData: UserAuthData): Flow<Resp<Nothing>> = flow {
+    override fun signIn(authData: UserAuthData): Flow<Resp<Nothing>> = flowResp {
         val res = service.signIn(AuthReq(authData.login, authData.password))
 
         if (res.isSuccessful) {

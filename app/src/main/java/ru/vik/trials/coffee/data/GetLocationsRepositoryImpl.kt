@@ -1,7 +1,6 @@
 package ru.vik.trials.coffee.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.model.BearerToken
 import ru.vik.trials.coffee.data.preferences.UserDataPreferences
 import ru.vik.trials.coffee.domain.GetLocationsRepository
@@ -16,7 +15,7 @@ class GetLocationsRepositoryImpl @Inject constructor(
     private val pref: UserDataPreferences
 ) : GetLocationsRepository {
 
-    override fun getLocations(): Flow<Resp<Location>> = flow {
+    override fun getLocations(): Flow<Resp<Location>> = flowResp {
         val res = service.getLocations(BearerToken(pref.token))
         if (res.isSuccessful) {
             res.body()?.let {
@@ -24,7 +23,7 @@ class GetLocationsRepositoryImpl @Inject constructor(
                     emit(Resp(Location(loc.id, loc.name, GeoPoint(loc.point.latitude, loc.point.longitude))))
                 }
             } ?: run {
-                emit(Resp(HttpErrors.UNKNOWN))
+                throw Exception()
             }
         } else {
             emit(Resp(res.code()))

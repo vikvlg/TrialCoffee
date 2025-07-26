@@ -2,7 +2,6 @@ package ru.vik.trials.coffee.data
 
 import android.location.Location
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.location.GpsClient
 import ru.vik.trials.coffee.domain.GetGeoLocationRepository
 import ru.vik.trials.coffee.domain.entities.GeoPoint
@@ -14,7 +13,7 @@ class GetGeoLocationRepositoryImpl @Inject constructor(
     private val client: GpsClient
 ) : GetGeoLocationRepository {
 
-    override fun getCurrentLocation(): Flow<Resp<GeoPoint>> = flow {
+    override fun getCurrentLocation(): Flow<Resp<GeoPoint>> = flowResp {
         // Сделаем запрос на получение местоположения
         var currentLoc: Location? = null
         var error: Int? = null

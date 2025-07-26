@@ -1,8 +1,6 @@
 package ru.vik.trials.coffee.data
 
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import ru.vik.trials.coffee.data.model.BearerToken
 import ru.vik.trials.coffee.data.preferences.UserDataPreferences
 import ru.vik.trials.coffee.domain.GetMenuRepository
@@ -16,7 +14,7 @@ class GetMenuRepositoryImpl @Inject constructor(
     private val pref: UserDataPreferences
 ) : GetMenuRepository {
 
-    override fun getMenu(shopId: Int): Flow<Resp<MenuItem>> = flow {
+    override fun getMenu(shopId: Int): Flow<Resp<MenuItem>> = flowResp {
         val res = service.getMenu(BearerToken(pref.token), shopId)
         if (res.isSuccessful) {
             res.body()?.let {
@@ -24,7 +22,7 @@ class GetMenuRepositoryImpl @Inject constructor(
                     emit(Resp(MenuItem(menu.id, menu.name, menu.imageURL, menu.price)))
                 }
             } ?: run {
-                emit(Resp(HttpErrors.UNKNOWN))
+                throw Exception()
             }
         } else {
             emit(Resp(res.code()))
