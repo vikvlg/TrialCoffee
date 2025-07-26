@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.presentation.AppToast
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.UIState
@@ -69,11 +70,7 @@ fun RegisterBlock(modifier: Modifier, screen: RegisterScreen) {
             when (newValue) {
                 // Ошибка регистрации
                 is UIState.Error -> {
-                    val text = context.getString(newValue.error)
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
-                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-                        show()
-                    }
+                    AppToast.make(context, newValue.error)
                 }
 
                 // Успешная регистрация

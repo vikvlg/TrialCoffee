@@ -1,8 +1,6 @@
 package ru.vik.trials.coffee.ui.auth
 
 import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.presentation.AppToast
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.UIState
@@ -82,11 +81,7 @@ fun AuthBlock(modifier: Modifier, screen: AuthScreen) {
             when (newValue) {
                 // Ошибка авторизации
                 is UIState.Error -> {
-                    val text = context.getString(newValue.error)
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
-                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-                        show()
-                    }
+                    AppToast.make(context, newValue.error)
                 }
 
                 // Успешная авторизация

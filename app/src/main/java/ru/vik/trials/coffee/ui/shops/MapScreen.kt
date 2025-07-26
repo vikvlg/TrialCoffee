@@ -1,9 +1,7 @@
 package ru.vik.trials.coffee.ui.shops
 
 import android.util.Log
-import android.view.Gravity
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
@@ -42,6 +40,7 @@ import com.yandex.runtime.image.ImageProvider
 import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.domain.entities.GeoPoint
 import ru.vik.trials.coffee.domain.entities.Location
+import ru.vik.trials.coffee.presentation.AppToast
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.UIState
@@ -79,11 +78,7 @@ class MapScreen
 
     fun showError(@StringRes id: Int) {
         val context = navController.context
-        val text = context.getString(id)
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
-            setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-            show()
-        }
+        AppToast.make(context, id)
     }
 }
 

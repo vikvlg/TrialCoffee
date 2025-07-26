@@ -1,7 +1,5 @@
 package ru.vik.trials.coffee.ui.menu
 
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +33,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import ru.vik.trials.coffee.R
 import ru.vik.trials.coffee.domain.entities.MenuItem
+import ru.vik.trials.coffee.presentation.AppToast
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.Screen
 import ru.vik.trials.coffee.presentation.UIState
@@ -90,12 +89,8 @@ fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
 
             // Ошибка получения данных
             if (newValue is UIState.Error) {
-                    val text = context.getString(newValue.error)
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).apply {
-                        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-                        show()
-                    }
-                }
+                AppToast.make(context, newValue.error)
+            }
             viewModel.resetState()
         }
     }

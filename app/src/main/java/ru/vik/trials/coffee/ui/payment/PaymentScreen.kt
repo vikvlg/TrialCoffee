@@ -1,7 +1,5 @@
 package ru.vik.trials.coffee.ui.payment
 
-import android.view.Gravity
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import ru.vik.trials.coffee.R
+import ru.vik.trials.coffee.presentation.AppToast
 import ru.vik.trials.coffee.presentation.Payment
 import ru.vik.trials.coffee.presentation.Route
 import ru.vik.trials.coffee.presentation.Screen
@@ -41,11 +40,7 @@ class PaymentScreen : Screen(Route.Payment()) {
     /** Обработчик кнопки "Оплатить". */
     fun onPayClick() {
         val context = navController.context
-        val text = context.getString(R.string.payment_pay_feature)
-        Toast.makeText(context, text, Toast.LENGTH_LONG).apply {
-            setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-            show()
-        }
+        AppToast.make(context, R.string.payment_pay_feature, true)
     }
 
     override fun registerGraph(
