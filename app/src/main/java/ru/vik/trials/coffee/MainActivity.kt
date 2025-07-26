@@ -2,39 +2,16 @@ package ru.vik.trials.coffee
 
 import android.Manifest
 import android.os.Bundle
-import android.view.Gravity
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import ru.vik.trials.coffee.presentation.Route
-import ru.vik.trials.coffee.presentation.register
-import ru.vik.trials.coffee.ui.auth.AuthScreen
-import ru.vik.trials.coffee.ui.menu.MenuScreen
-import ru.vik.trials.coffee.ui.payment.PaymentScreen
-import ru.vik.trials.coffee.ui.register.RegisterScreen
-import ru.vik.trials.coffee.ui.shops.MapScreen
-import ru.vik.trials.coffee.ui.shops.ShopsScreen
+import ru.vik.trials.coffee.presentation.AppToast
+import ru.vik.trials.coffee.ui.CoffeeApp
 import ru.vik.trials.coffee.ui.theme.TrialCoffeeTheme
+
 
 @ExperimentalMaterial3Api
 @AndroidEntryPoint
@@ -44,6 +21,7 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
     }
 
+    // Работа с разрешениями приложения
     val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -52,10 +30,7 @@ class MainActivity : ComponentActivity() {
             granted = granted || it.value
         }
         if (!granted) {
-            Toast.makeText(this, getString(R.string.permissions_not_granted), Toast.LENGTH_LONG).apply {
-                setGravity(Gravity.CENTER_VERTICAL, 0, 0)
-                show()
-            }
+            AppToast.make(this, R.string.permissions_not_granted, true)
         }
     }
 
@@ -68,89 +43,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TrialCoffeeTheme {
-                val navController = rememberNavController()
-                val showBackArrow = remember { mutableStateOf(false) }
-                val topBarTitle = remember { mutableStateOf(getString(R.string.screen_title)) }
-
-                navController.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
-                    // Отследим навигацию приложения
-                    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
-                        // Изменим название экрана
-                        val label = destination.label?.toString()
-                        topBarTitle.value = if (label.isNullOrBlank()) getString(R.string.screen_title) else label
-                        // Изменим флаг отображения кнопки "Назад"
-                        showBackArrow.value = (controller.previousBackStackEntry != null)
-                    }
-                })
-
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        CenterAlignedTopAppBar(
-                            // Заголовок экрана.
-                            title = {
-                                Text(topBarTitle.value)
-                            },
-                            // Кнопка "Назад"
-                            navigationIcon = {
-                                if (showBackArrow.value)
-                                    IconButton(
-                                        onClick = {
-                                            // BUG: Без этой проверки глючит, т.к. в самом начале backQueue содержит 2 элемента.
-                                            if (navController.previousBackStackEntry != null)
-                                                navController.popBackStack()
-                                        }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = getString(R.string.navigation_back)
-                                        )
-                                    }
-                            },
-//                            // Топ-меню экрана.
-//                            actions = {
-//                                IconButton(onClick = { /* doSomething() */ }) {
-//                                    Icon(
-//                                        imageVector = Icons.Filled.Menu,
-//                                        contentDescription = getString(R.string.navigation_menu_item)
-//                                    )
-//                                }
-//                            },
-                        )
-                    },
-                    content = { padding ->
-                        val modifier = Modifier.padding(padding)
-                        NavHost(
-                            navController = navController,
-                            startDestination = Route.SignIn()
-                        ) {
-                            register(
-                                AuthScreen(),
-                                navController,
-                                modifier)
-                            register(
-                                RegisterScreen(),
-                                navController,
-                                modifier)
-                            register(
-                                MapScreen(),
-                                navController,
-                                modifier)
-                            register(
-                                ShopsScreen(),
-                                navController,
-                                modifier)
-                            register(
-                                MenuScreen(),
-                                navController,
-                                modifier)
-                            register(
-                                PaymentScreen(),
-                                navController,
-                                modifier)
-                        }
-                    },
-                )
+                CoffeeApp()
             }
         }
     }
