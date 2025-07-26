@@ -30,7 +30,7 @@ import ru.vik.trials.coffee.ui.register.RegisterScreen
 import ru.vik.trials.coffee.ui.shops.MapScreen
 import ru.vik.trials.coffee.ui.shops.ShopsScreen
 
-
+/** Базовая настройка compose-приложения. */
 @ExperimentalMaterial3Api
 @Composable
 fun CoffeeApp() {

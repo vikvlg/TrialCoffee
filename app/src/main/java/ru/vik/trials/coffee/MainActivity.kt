@@ -12,7 +12,7 @@ import ru.vik.trials.coffee.presentation.AppToast
 import ru.vik.trials.coffee.ui.CoffeeApp
 import ru.vik.trials.coffee.ui.theme.TrialCoffeeTheme
 
-
+/** Главная активность приложения. */
 @ExperimentalMaterial3Api
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         private const val TAG = "MainActivity"
     }
 
-    // Работа с разрешениями приложения
+    /** Запрос разрешений приложения. */
     val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
