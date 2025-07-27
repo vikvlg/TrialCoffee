@@ -11,5 +11,5 @@ interface GetMenuRepository {
      *
      * @param shopId Идентификатор кофейни.
      * */
-    fun getMenu(shopId: Int): Flow<Resp<MenuItem>>
+    fun getMenu(shopId: Int): Flow<Resp<List<MenuItem>>>
 }

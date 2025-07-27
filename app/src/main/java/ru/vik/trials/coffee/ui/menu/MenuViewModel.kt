@@ -37,9 +37,7 @@ class MenuViewModel @Inject constructor(
     private val _uiImageState = MutableUIStateFlow<Unit>()
 
     /** Меню кофейни. */
-    private val _menu = ArrayList<MenuItem>()
-    /** Меню кофейни. */
-    var menu = MutableStateFlow(_menu)
+    var menu = MutableStateFlow(ArrayList<MenuItem>().toList())
 
     /** Список загруженных изображений. */
     private val images = ArrayList<Image>()
@@ -49,20 +47,18 @@ class MenuViewModel @Inject constructor(
 
     /** Запрашивает меню кофейни. */
     fun refresh(shopId: Int) {
-        clear()
         // Запрос меню кофейни.
         getMenuUseCase(shopId).collectNetworkRequest(_uiState, ::mapErrorCodes) {
-            if (it == null)
-                return@collectNetworkRequest
-            add(it)
+            menu.value = it ?: ArrayList()
 
-            // Запрос картинки
-            getImageUseCase(it.imageURL).collectNetworkRequest(_uiImageState,::mapImageErrorCodes) { image ->
-                if (image == null)
-                    return@collectNetworkRequest
-
-                images.add(image)
-                updateList()
+            // Запрос изображений
+            for (item in menu.value) {
+                getImageUseCase(item.imageURL).collectNetworkRequest(_uiImageState,::mapImageErrorCodes) { image ->
+                    if (image != null) {
+                        images.add(image)
+                        updateList()
+                    }
+                }
             }
         }
     }
@@ -102,7 +98,7 @@ class MenuViewModel @Inject constructor(
      * */
     fun getSerializedPayment(): String {
         val list = ArrayList<Payment>()
-        for (item in _menu) {
+        for (item in menu.value) {
             val count = getItemCount(item)
             if (count == 0)
                 continue
@@ -110,22 +106,6 @@ class MenuViewModel @Inject constructor(
             list.add(Payment(item.id, item.name, item.price, count))
         }
         return Uri.encode(Gson().toJson(list))
-    }
-
-    /** Очищает меню. */
-    private fun clear() {
-        _menu.clear()
-        updateList()
-    }
-
-    /**
-     * Добавляет товар к меню.
-     *
-     * Вызывает полное обновление меню.
-     * */
-    private fun add(item: MenuItem) {
-        _menu.add(item)
-        updateList()
     }
 
     /**
@@ -136,7 +116,7 @@ class MenuViewModel @Inject constructor(
      */
     private fun updateList() {
         val newList = ArrayList<MenuItem>()
-        for (item in _menu) {
+        for (item in menu.value) {
             val newItem = MenuItem(item.id, item.name, item.imageURL, item.price)
             newList.add(newItem)
         }

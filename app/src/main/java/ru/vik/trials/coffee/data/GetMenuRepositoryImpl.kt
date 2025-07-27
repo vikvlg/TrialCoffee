@@ -14,15 +14,17 @@ class GetMenuRepositoryImpl @Inject constructor(
     private val pref: UserDataPreferences
 ) : GetMenuRepository {
 
-    override fun getMenu(shopId: Int): Flow<Resp<MenuItem>> = flowResp {
+    override fun getMenu(shopId: Int): Flow<Resp<List<MenuItem>>> = flowResp {
         val res = service.getMenu(BearerToken(pref.token), shopId)
         if (res.isSuccessful) {
             res.body()?.let {
+                val list = ArrayList<MenuItem>()
                 for (menu in it) {
-                    emit(Resp(MenuItem(menu.id, menu.name, menu.imageURL, menu.price)))
+                    list.add(MenuItem(menu.id, menu.name, menu.imageURL, menu.price))
                 }
+                emit(Resp(list))
             } ?: run {
-                throw Exception()
+                throw Exception("Null menu")
             }
         } else {
             emit(Resp(res.code()))
