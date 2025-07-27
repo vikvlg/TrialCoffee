@@ -7,5 +7,5 @@ import ru.vik.trials.coffee.domain.entities.Resp
 /** Репозиторий получения списка кофеен. */
 interface  GetLocationsRepository {
     /** Получает список кофеен. */
-    fun getLocations(): Flow<Resp<Location>>
+    fun getLocations(): Flow<Resp<List<Location>>>
 }

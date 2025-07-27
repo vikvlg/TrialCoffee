@@ -35,9 +35,7 @@ class ShopsViewModel @Inject constructor(
         }
 
     /** Список кофеен. */
-    private var _shops = ArrayList<Location>()
-    /** Список кофеен. */
-    var shops = MutableStateFlow(_shops)
+    var shops = MutableStateFlow(ArrayList<Location>().toList())
 
     /** Текущее местоположение пользователя. */
     private var _userLocation = MutableStateFlow<GeoPoint?>(null)
@@ -46,11 +44,9 @@ class ShopsViewModel @Inject constructor(
 
     /** Получает список кофеен. */
     fun refresh() {
-        clear()
         // Запрос списка точек
         getLocationsUseCase().collectNetworkRequest(_uiState, ::mapErrorCodes) {
-            if (it != null)
-                add(it)
+            shops.value = it ?: ArrayList()
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -58,9 +54,7 @@ class ShopsViewModel @Inject constructor(
                 if (it.isSuccess) {
                     // Оповестим об изменении положении пользователя
                     _userLocation.emit(it.value)
-                    // Для списка коффен приходится полностью обновлять список,
-                    // чтобы отобразить расстояние до них, т.к. более лучшеего решения пока не нашел.
-                    updateList()
+                    Log.d(TAG, "geo location: ${it.value?.latitude}; ${it.value?.longitude}")
                 } else {
                     // Сообщить об ошибке?
                     Log.d(TAG, "geo location error: ${it.error}")
@@ -72,44 +66,14 @@ class ShopsViewModel @Inject constructor(
     /**
      * Возвращает расстояние от пользователя до точки.
      *
+     * @param userLoc Кордината пользователя. Берется из [userLocation], нужна передача сюда, чтобы корректно обновлялся интерфейс.
      * @param loc Интересуемая точка.
      * @return Расстояние в км. Если местоположении неизвестно, то null.
      * */
-    fun getDistance(loc: Location): Double? {
-        val curLoc = _userLocation.value ?: return null
-        return getGeoDistanceUseCase(curLoc, loc.point)
-    }
-
-    /** Очищает список кофеен. */
-    private fun clear() {
-        _shops.clear()
-        updateList()
-    }
-
-    /**
-     * Добавляет новую кофейню.
-     *
-     * Вызывает перерисовку всего списка.
-     * */
-    private fun add(loc: Location) {
-        _shops.add(loc)
-        updateList()
-    }
-
-    /**
-     * Обновляет список кофеен.
-     *
-     * Даже при изменении только 1 элемента списка, приходится обновлять весь список,
-     * т.к. нормального решения не нашел.
-     * */
-    private fun updateList() {
-        val newList = ArrayList<Location>()
-        for (shop in _shops) {
-            val newLoc = Location(shop.id, shop.name, shop.point)
-            newList.add(newLoc)
-        }
-
-        shops.value = newList
+    fun getDistance(userLoc: GeoPoint?, loc: Location): Double? {
+        if (userLoc == null)
+            return null
+        return getGeoDistanceUseCase(userLoc, loc.point)
     }
 
     override fun mapErrorCodes(code: Int): Int {

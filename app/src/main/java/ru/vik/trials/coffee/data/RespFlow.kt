@@ -29,8 +29,8 @@ private class RespFlow<T>(private val block: suspend FlowCollector<Resp<T>>.() -
             Log.d(TAG, "exception: timeout")
             emit(Resp(HttpErrors.TIMEOUT))
         }
-        catch (_: Exception) {
-            Log.d(TAG, "exception: unknow")
+        catch (ex: Exception) {
+            Log.d(TAG, "exception: unknow[${ex.message}]")
             emit(Resp(HttpErrors.UNKNOWN))
         }
     }

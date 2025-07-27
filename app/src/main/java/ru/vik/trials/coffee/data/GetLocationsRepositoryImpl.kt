@@ -15,15 +15,17 @@ class GetLocationsRepositoryImpl @Inject constructor(
     private val pref: UserDataPreferences
 ) : GetLocationsRepository {
 
-    override fun getLocations(): Flow<Resp<Location>> = flowResp {
+    override fun getLocations(): Flow<Resp<List<Location>>> = flowResp {
         val res = service.getLocations(BearerToken(pref.token))
         if (res.isSuccessful) {
             res.body()?.let {
+                val list = ArrayList<Location>()
                 for (loc in it) {
-                    emit(Resp(Location(loc.id, loc.name, GeoPoint(loc.point.latitude, loc.point.longitude))))
+                    list.add(Location(loc.id, loc.name, GeoPoint(loc.point.latitude, loc.point.longitude)))
                 }
+                emit(Resp(list))
             } ?: run {
-                throw Exception()
+                throw Exception("Null location list")
             }
         } else {
             emit(Resp(res.code()))

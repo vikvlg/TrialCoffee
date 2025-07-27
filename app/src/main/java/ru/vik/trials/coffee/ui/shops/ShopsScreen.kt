@@ -115,6 +115,10 @@ fun ShopsBlock(modifier: Modifier, screen: ShopsScreen) {
 @Composable
 fun ShopItem(shop: Location, screen: ShopsScreen) {
     val viewModel: ShopsViewModel = hiltViewModel()
+    // Не нашел лучшего способа обновления элемента списка, когда приходят данные по гео-локации,
+    // поэтому использую userLocation как аргумент, чтобы интерфейс автоматом изменился при измении этого поля.
+    val userLocation by viewModel.userLocation.collectAsState()
+
     Card(
         modifier = Modifier
             .fillMaxWidth(0.9f)
@@ -125,7 +129,7 @@ fun ShopItem(shop: Location, screen: ShopsScreen) {
         shape = RoundedCornerShape(8.dp)
     ) {
         Column {
-            val dist = viewModel.getDistance(shop)
+            val dist = viewModel.getDistance(userLocation, shop)
             Text(text = shop.name, style = typography.headlineLarge)
             if (dist != null) {
                 val format = stringResource(R.string.shops_distance)
