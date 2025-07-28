@@ -1,5 +1,6 @@
 package ru.vik.trials.coffee.ui.payment
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +42,23 @@ class PaymentScreen : Screen(Route.Payment()) {
     fun onPayClick() {
         val context = navController.context
         AppToast.show(context, R.string.payment_pay_feature, true)
+    }
+
+    /**
+     * Обработчик изменения количества в заказе.
+     *
+     * @param newOrder Полные данные по заказу.
+     */
+    fun onChangeCount(newOrder: String) {
+        val entry = navController.previousBackStackEntry
+        if (entry == null) {
+            return
+        }
+
+        // Сохраним измененный заказ для предыдущего окна.
+        // TODO: Нужно это делать на событии типа OnBackPressedCallback,
+        // но пока не нашел хорошего решения.
+        entry.savedStateHandle[Route.ARG_ORDER_DATA] = newOrder
     }
 
     override fun registerGraph(
@@ -115,7 +133,7 @@ fun PaymentBlock(modifier: Modifier, payment: String?, screen: PaymentScreen) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(items) {
-                        PaymentItem(it)
+                        PaymentItem(it, screen)
                     }
                 }
                 Text(
@@ -133,7 +151,9 @@ fun PaymentBlock(modifier: Modifier, payment: String?, screen: PaymentScreen) {
 
 /** Верстка элемента списка заказа. */
 @Composable
-fun PaymentItem(item: Payment) {
+fun PaymentItem(item: Payment, screen: PaymentScreen) {
+    val viewModel: PaymentViewModel = hiltViewModel()
+
     Card(
         modifier = Modifier
             .fillMaxWidth(0.9f)
@@ -153,7 +173,11 @@ fun PaymentItem(item: Payment) {
             Column {
                 HorizontalNumberPicker(
                     height = 18.dp,
-                    default = item.count
+                    default = item.count,
+                    onValueChange = {
+                        item.count = it
+                        screen.onChangeCount(viewModel.getPayment())
+                    }
                 )
             }
         }

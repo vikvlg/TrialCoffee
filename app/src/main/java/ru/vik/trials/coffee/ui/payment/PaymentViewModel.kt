@@ -19,6 +19,15 @@ class PaymentViewModel @Inject constructor()
     var items = MutableStateFlow<List<Payment>>(listOf())
 
     /**
+     * Сериализует данные по заказу.
+     *
+     * @return Измененные данные по заказу в json-формате.
+     * */
+    fun getPayment(): String {
+        return Gson().toJson(items.value)
+    }
+
+    /**
      * Десериализует данные по заказу.
      *
      * @param payment Данные по заказу в json-формате.

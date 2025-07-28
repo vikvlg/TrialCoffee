@@ -62,10 +62,13 @@ class MenuScreen()
             label = navController.context.getString(R.string.screen_menu_title),
             arguments = listOf(navArgument(Route.ARG_MENU_ID) { type = NavType.IntType })
         ) { stackEntry ->
+            // Нам могут прийти данные по измененному заказу
+            val order = stackEntry.savedStateHandle.get<String>(Route.ARG_ORDER_DATA)
             val id = stackEntry.arguments?.getInt(Route.ARG_MENU_ID) ?: 0
             MenuBlock(
                 modifier = modifier,
                 shopId = id,
+                order = order,
                 screen = this
             )
         }
@@ -74,10 +77,12 @@ class MenuScreen()
 
 /** Верстка экрана меню. */
 @Composable
-fun MenuBlock(modifier: Modifier, shopId: Int, screen: MenuScreen) {
+fun MenuBlock(modifier: Modifier, shopId: Int, order: String?, screen: MenuScreen) {
     val context = LocalContext.current
     val viewModel: MenuViewModel = hiltViewModel()
     val items by viewModel.menu.collectAsState()
+    // Установим данные по измененному заказу
+    viewModel.setOrder(order)
     // Запросим меню кофейни
     viewModel.refresh(shopId)
 

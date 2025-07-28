@@ -9,5 +9,5 @@ data class Payment(
     /** Цена. */
     val price: Float,
     /** Количество. */
-    val count: Int
+    var count: Int
 )

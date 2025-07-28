@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.imageResource
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.vik.trials.coffee.R
@@ -17,6 +18,7 @@ import ru.vik.trials.coffee.domain.entities.MenuItem
 import ru.vik.trials.coffee.presentation.BaseViewModel
 import ru.vik.trials.coffee.presentation.MutableUIStateFlow
 import ru.vik.trials.coffee.presentation.Payment
+import java.lang.reflect.Type
 import javax.inject.Inject
 
 /** ViewModel для работы с меню кофейни. */
@@ -44,6 +46,27 @@ class MenuViewModel @Inject constructor(
 
     /** Количество выбранных позиций в меню <идентификатор, количество>. */
     private val counts: MutableMap<Int, Int> = mutableMapOf()
+
+    /**
+     * Устанавливает текущий заказ.
+     *
+     * @param orderData Данные по заказу в json-формате.
+     */
+    fun setOrder(orderData: String?) {
+        if (orderData == null)
+            return
+
+        val listType: Type? = object : TypeToken<ArrayList<Payment?>?>() {}.type
+        val orderList: ArrayList<Payment?>? = Gson().fromJson(orderData, listType)
+        if (orderList == null)
+            return
+
+        for (it in orderList) {
+            if (it == null)
+                continue
+            setItemCount(it.id, it.count)
+        }
+    }
 
     /** Запрашивает меню кофейни. */
     fun refresh(shopId: Int) {
@@ -89,7 +112,17 @@ class MenuViewModel @Inject constructor(
      * @param value Количество товара.
      * */
     fun setItemCount(item: MenuItem, value: Int) {
-        counts[item.id] = value
+        setItemCount(item.id, value)
+    }
+
+    /**
+     * Устанавливает сколько пользователь выбрал товара.
+     *
+     * @param itemId Идентификатор товара.
+     * @param value Количество товара.
+     * */
+    private fun setItemCount(itemId: Int, value: Int) {
+        counts[itemId] = value
     }
 
     /** Возвращает сериализованные данные заказа.
