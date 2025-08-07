@@ -1,4 +1,7 @@
-# Тестовое задание
+## Тестовое задание "Кофейни"
+
+<details>
+<summary>Техническое задание</summary>
 
 ## Задача:
 
@@ -289,3 +292,9 @@ password: NotNull, NotBlank, NotEmpty
   </tr>
 
 </table>
+
+</details>
+
+## Архитектура разработанного приложения
+
+![](docs/architecture.jpg)
